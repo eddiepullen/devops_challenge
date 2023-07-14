@@ -1,8 +1,8 @@
 name: devops-challenge
 
 env:
-  DEPLOY_DIR: ./devops-challenge/infrastructure
-  BACKEND_CONF: ././devops-challenge/environment/backend.conf
+  DEPLOY_DIR: ./infrastructure
+  BACKEND_CONF: ./environment/backend.conf
 
 on:
   push:
