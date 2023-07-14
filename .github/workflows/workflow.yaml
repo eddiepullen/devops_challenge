@@ -1,0 +1,43 @@
+name: devops-challenge
+
+env:
+  DEPLOY_DIR: ./devops-challenge/infrastructure
+  BACKEND_CONF: ././devops-challenge/environment/backend.conf
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  devops-challenge:
+    runs-on: ubuntu-latest
+    environment: main
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3.5.3
+
+      - name: Terraform Init
+        id: init
+        shell: bash
+        working-directory: $DEPLOY_DIR
+        run: |
+          terraform init -input=false -backend-config=$BACKEND_CONF
+
+      - name: Terraform Validate
+        id: validate
+        shell: bash
+        run: |
+          cd $DEPLOY_DIR
+          terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        shell: bash
+        working-directory: $DEPLOY_DIR
+        env:
+          TF_VAR_access_key: ${{ secrets.ACCESS_KEY }}
+          TF_VAR_secret_key: ${{ secrets.SECRET_KEY }}
+        run: |
+          terraform plan -out tfplan -input=false -lock=false 
+          terraform show -json tfplan > plan.json
