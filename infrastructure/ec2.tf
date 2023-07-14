@@ -5,8 +5,6 @@ locals {
   })
 }
 
-
-
 module "ec2_instance" {
   source   = "terraform-aws-modules/ec2-instance/aws"
   for_each = local.ec2_instance_map
