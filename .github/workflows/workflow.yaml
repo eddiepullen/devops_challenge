@@ -33,9 +33,9 @@ jobs:
         working-directory: infrastructure
         run: |
           mkdir -p ./ansible/keys 
-          echo ${{ secrets.ANSIBLE_SSH_KEY }} > ./ansible/keys/ansible-ssh-key.pem
-          echo ${{ secrets.LB_SSH_KEY }} > ./ansible/keys/lb-ssh-key.pem
-          echo ${{ secrets.DB_SSH_KEY }} > ./ansible/keys/db-ssh-key.pem
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
+          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
+          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
           ls -la ./ansible/keys
 
             
