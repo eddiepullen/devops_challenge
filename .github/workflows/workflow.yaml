@@ -30,9 +30,13 @@ jobs:
       - name: Write keys to file
         id: write_keys_to_file
         shell: bash
-        working-directory: ansible
+        working-directory: infrastructure
         run: |
-          mkdir ./keys && echo ${{ secrets.ANSIBLE_SSH_KEY }} > ./ansible-ssh-key.pem && ls -la ./keys
+          mkdir -p ./ansible/keys 
+          echo ${{ secrets.ANSIBLE_SSH_KEY }} > ./ansible/keys/ansible-ssh-key.pem
+          echo ${{ secrets.LB_SSH_KEY }} > ./ansible/keys/lb-ssh-key.pem
+          echo ${{ secrets.DB_SSH_KEY }} > ./ansible/keys/db-ssh-key.pem
+          ls -la ./ansible/keys
 
             
       - name: Terraform Validate
