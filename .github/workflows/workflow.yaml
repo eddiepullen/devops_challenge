@@ -17,10 +17,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3.5.3
 
-      - name: Debig
+      - name: Debug
         id: debug
         shell: bash
-        working-directory: $DEPLOY_DIR
+        # working-directory: $DEPLOY_DIR
         run: |
           ls -la
         
