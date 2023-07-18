@@ -37,7 +37,7 @@ jobs:
           repo: devops-challenge
           region: eu-central-1
           dockerfile: .
-          context: ./frontend-validator
+          context: validator-frontend
           tags: ${{ github.ref_name }}-0.0.${{ github.run_number }}
 
       # - name: Configure AWS credentials
