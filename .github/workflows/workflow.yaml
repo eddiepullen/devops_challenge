@@ -22,7 +22,7 @@ jobs:
         shell: bash
         # working-directory: $DEPLOY_DIR
         run: |
-          ls -la
+          ls -la && pwd
         
       - name: Terraform Init
         id: init
