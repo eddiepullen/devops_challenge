@@ -31,8 +31,7 @@ resource "null_resource" "my_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      # private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
-      private_key = file(var.ansible_private_key)
+      private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
       host        = module.ansible_instance.public_ip
     }
     
@@ -40,16 +39,14 @@ resource "null_resource" "my_instance" {
   }
 
   provisioner "local-exec" {
-    # command = "ansible-playbook --private-key=${path.module}/ansible/config/keys/ansible-ssh-key.pem --ssh-common-args='-o StrictHostKeyChecking=no' ${path.module}/ansible/config/master.yaml -u ubuntu -i '${module.ansible_instance.public_ip},' "
-    command = "ansible-playbook --private-key=${file(var.ansible_private_key)} --ssh-common-args='-o StrictHostKeyChecking=no' ${path.module}/ansible/config/master.yaml -u ubuntu -i '${module.ansible_instance.public_ip},' "
+    command = "ansible-playbook --private-key=${path.module}/ansible/config/keys/ansible-ssh-key.pem --ssh-common-args='-o StrictHostKeyChecking=no' ${path.module}/ansible/config/master.yaml -u ubuntu -i '${module.ansible_instance.public_ip},' "
   }
 
   provisioner "remote-exec" {
     connection {  
       type        = "ssh"
       user        = "ubuntu"
-      # private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
-      private_key = file(var.ansible_private_key)
+      private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
       host        = module.ansible_instance.public_ip
     }
     
