@@ -15,11 +15,6 @@ variable "secret_key" {
   type        = string
 }
 
-variable "ansible_private_key" {
-  description = "The SSH private key for the ansible control instance"
-  type        = string
-}
-
 # VPC related variables
 variable "vpc" {
   type = object({
