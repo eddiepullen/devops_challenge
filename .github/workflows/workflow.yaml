@@ -16,13 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3.5.3
-
-      - name: Debug
-        id: debug
-        shell: bash
-        # working-directory: $DEPLOY_DIR
-        run: |
-          ls -la && pwd
         
       - name: Terraform Init
         id: init
@@ -41,6 +34,13 @@ jobs:
         working-directory: infrastructure
         run: |
           terraform validate
+
+      - name: Write keys to file
+        id: write_keys_to_file
+        shell: bash
+        working-directory: ansible
+        run: |
+          mkdir ./keys && echo ${{ secrets.ANSIBLE_SSH_KEY }} > ./ansible-ssh-key.pem && ls -la
 
       - name: Terraform Plan
         id: plan
