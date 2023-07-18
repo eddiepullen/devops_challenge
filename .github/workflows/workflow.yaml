@@ -28,40 +28,31 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: BUild and push image to ECR
-        uses: appleboy/docker-ecr-action@master
-        with:
-          access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          registry: ${{ steps.login-ecr.outputs.registry }}
-          repo: devops-challenge
-          region: eu-central-1
-          dockerfile: .
-          context: validator-frontend
-          tags: ${{ github.ref_name }}-0.0.${{ github.run_number }}
-
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
+      # - name: BUild and push image to ECR
+      #   uses: appleboy/docker-ecr-action@master
       #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: eu-central-1
+      #     access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #     registry: ${{ steps.login-ecr.outputs.registry }}
+      #     repo: devops-challenge
+      #     region: eu-central-1
+      #     dockerfile: .
+      #     context: validator-frontend
+      #     tags: ${{ github.ref_name }}-0.0.${{ github.run_number }}
+
   
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
-  
-      # - name: Build, tag, and push the image to Amazon ECR
-      #   id: build-image
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: devops-challenge
-      #     IMAGE_TAG: ${{ github.ref_name }}-0.0.${{ github.run_number }}
-      #   run: |
-      #     # Build a docker container and push it to ECR 
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: validator-frontend
+          IMAGE_TAG: ${{ github.ref_name }}-0.0.${{ github.run_number }}
+        run: |
+          aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       # - name: Build and push image to ECR
       #   uses: vitr/actions-build-and-upload-to-ecs@master
