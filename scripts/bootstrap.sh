@@ -19,3 +19,4 @@ for key in ${keys[@]}; do
 done
 
 chmod 400 $key_path/* 
+

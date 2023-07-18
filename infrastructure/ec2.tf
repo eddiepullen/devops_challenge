@@ -88,6 +88,4 @@ module "db_ec2_instance" {
   vpc_security_group_ids      = [module.db_security_group.security_group_id]
   subnet_id                   = element(module.vpc_devops_challenge.public_subnets, 0)
   private_ip                  = var.db_ec2_instance.private_ip
-
-  tags = var.db_ec2_instance.tags
 }

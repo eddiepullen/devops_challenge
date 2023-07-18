@@ -28,7 +28,6 @@ variable "vpc" {
   })
 }
 
-
 # Security group related variables 
 variable "ansible_security_group_ingress" {
   type = list
