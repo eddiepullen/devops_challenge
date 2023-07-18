@@ -19,28 +19,75 @@ variable "secret_key" {
 # VPC related variables
 variable "vpc" {
   type = object({
-    cidr_block       = string
-    instance_tenancy = string
-    tags             = map(string)
+    name               = string
+    cidr               = string
+    public_subnets     = list(string)
+    enable_nat_gateway = bool
+    enable_vpn_gateway = bool
+    tags               = map(string)
   })
 }
 
 
-# Subnet related variables
-variable "subnet" {
+# Security group related variables 
+variable "ansible_security_group_ingress" {
+  type = list
+}
+
+variable "ansible_security_group_egress" {
+  type = list
+}
+
+variable "lb_security_group_ingress" {
+  type = list
+}
+
+variable "lb_security_group_egress" {
+  type = list
+}
+
+variable "db_security_group_ingress" {
+  type = list
+}
+
+variable "db_security_group_egress" {
+  type = list
+}
+
+
+# ec2 instances related variables
+variable "ansible_instance" {
   type = object({
-    cidr_block       = string
-    tags             = map(string)
+    name                        = string
+    instance_type               = string
+    key_name                    = string
+    private_ip                  = string
+    monitoring                  = bool
+    associate_public_ip_address = bool
+    tags                        = map(string)
   })
 }
 
+variable "lb_ec2_instance" {
+  type = object({
+    name                        = string
+    instance_type               = string
+    key_name                    = string
+    private_ip                  = string
+    monitoring                  = bool
+    associate_public_ip_address = bool
+    tags                        = map(string)
+  })
+}
 
-# ec2 instance related variables
-variable "ec2" {
-  type = list(object({
-    name                   = string
-    instance_type          = string
-    monitoring             = bool
-    tags                   = map(string)
-  }))
+variable "db_ec2_instance" {
+  type = object({
+    name                        = string
+    instance_type               = string
+    key_name                    = string
+    private_ip                  = string
+    monitoring                  = bool
+    associate_public_ip_address = bool
+    tags                        = map(string)
+  })
 }

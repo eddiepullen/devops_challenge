@@ -1,7 +1,15 @@
 # Create a VPC
-resource "aws_vpc" "vpc_devops_challenge" {
-  cidr_block       = var.vpc.cidr_block
-  instance_tenancy = var.vpc.instance_tenancy
+module "vpc_devops_challenge" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = var.vpc.name
+  cidr = var.vpc.cidr
+
+  azs             = ["${var.region}a"]
+  public_subnets  = var.vpc.public_subnets
+
+  enable_nat_gateway = var.vpc.enable_nat_gateway
+  enable_vpn_gateway = var.vpc.enable_vpn_gateway
 
   tags = var.vpc.tags
 }

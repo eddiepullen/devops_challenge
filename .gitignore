@@ -1,2 +1,3 @@
 infrastructure/.terraform.lock.hcl
 infrastructure/.terraform
+infrastructure/ansible/config/keys/*
