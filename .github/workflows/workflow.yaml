@@ -1,8 +1,8 @@
 name: devops-challenge
 
 env:
-  DEPLOY_DIR: /infrastructure
-  BACKEND_CONF: /environment/backend.conf
+  # DEPLOY_DIR: /infrastructure
+  BACKEND_CONF: ../environment/backend.conf
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       - name: Terraform Init
         id: init
         shell: bash
-        working-directory: $DEPLOY_DIR
+        working-directory: infrastructure
         run: |
           terraform init -input=false -backend-config=$BACKEND_CONF
 
