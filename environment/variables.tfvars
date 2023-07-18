@@ -1,5 +1,11 @@
 region     = "eu-central-1"
 
+# AWS provider variables
+# access_key = ""
+# secret_key = ""
+
+# Ansible SSH private key
+# ansible_private_key = ""
 
 # VPC related variables
 vpc = {
