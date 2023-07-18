@@ -17,6 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3.5.3
 
+      - name: Debig
+        id: debug
+        shell: bash
+        working-directory: $DEPLOY_DIR
+        run: |
+          ls -la
+        
       - name: Terraform Init
         id: init
         shell: bash

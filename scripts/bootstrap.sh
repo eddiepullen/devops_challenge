@@ -18,5 +18,6 @@ for key in ${keys[@]}; do
   --output text > $key_path$key.pem
 done
 
+mkdir -p $key_path  
 chmod 400 $key_path/* 
 
