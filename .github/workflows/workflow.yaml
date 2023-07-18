@@ -1,8 +1,8 @@
 name: devops-challenge
 
-# env:
-#   DEPLOY_DIR: /infrastructure
-#   BACKEND_CONF: ../environment/backend.conf
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 on:
   push:
@@ -47,8 +47,6 @@ jobs:
         shell: bash
         working-directory: infrastructure
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_VAR_ansible_private_key: ${{ secrets.ANSIBLE_SSH_KEY }}
