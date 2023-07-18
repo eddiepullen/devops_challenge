@@ -33,7 +33,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: devops-challenge
-          IMAGE_TAG: ${{ github.ref }}-0.0.${{ github.run_number }}
+          IMAGE_TAG: ${{ github.ref_name }}-0.0.${{ github.run_number }}
         run: |
           docker build -t $ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
