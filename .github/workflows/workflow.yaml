@@ -94,11 +94,11 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
-          mkdir -p ${{ env.KEY_PATH }}
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          ls -la ${{ env.KEY_PATH }}${{ env.KEY }}
+          mkdir -p ./ansible/config/keys
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
+          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
+          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
+          ls -la ./ansible/config/keys/
 
           terraform apply -auto-approve tfplan
 # chmod 440 ${{ env.KEY_PATH }}/*
