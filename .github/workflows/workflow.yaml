@@ -56,6 +56,11 @@ jobs:
       #     echo "Pushing image to ECR..."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
+                # mkdir -p ./ansible/keys
+          # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
+          # echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
+          # echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
+          
       - name: Terraform Init
         id: init
         shell: bash
@@ -87,14 +92,10 @@ jobs:
           TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-
           terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
           terraform show -json tfplan > plan.json
 
-          # mkdir -p ./ansible/keys
-          # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
-          # echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
-          # echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
+
 
       - name: Terraform Apply
         id: apply
