@@ -116,13 +116,25 @@
       shell: 
         docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest
 
+    - name: Pull backend image
+      shell: 
+        docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend:latest
+
     - name: Stop running frontned container
       shell: 
         docker ps -q --filter ancestor="992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend" | xargs -r docker stop
 
+    - name: Stop running backend container
+      shell: 
+        docker ps -q --filter ancestor="992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend" | xargs -r docker stop
+
     - name: Remove exited containers
       shell: 
-        docker rm -v $(docker ps -a -q -f status=exited)
+        docker container prune -f
+
+    - name: Run backend container
+      shell: 
+        docker run -d 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend:latest
 
     - name: Run frontend container
       shell: 
