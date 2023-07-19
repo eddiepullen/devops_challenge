@@ -60,7 +60,7 @@ jobs:
           # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
           # echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
           # echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
-          
+
       - name: Terraform Init
         id: init
         shell: bash
@@ -102,4 +102,5 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
+          ls -la ${{ env.KEY_PATH }}${{ env.KEY }}
           terraform apply -auto-approve tfplan
