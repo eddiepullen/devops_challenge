@@ -72,10 +72,11 @@ jobs:
         working-directory: infrastructure
         run: |
           mkdir -p ${{ env.KEY_PATH }}
-          echo ${{ secrets.ANSIBLE_SSH_KEY }} > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo ${{ secrets.LB_SSH_KEY }} > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo ${{ secrets.DB_SSH_KEY }} > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           chmod 400 ${{ env.KEY_PATH }}/*
+          cat ${{ env.KEY_PATH }}${{ env.KEY }}
           terraform validate
 
       - name: Terraform Plan
