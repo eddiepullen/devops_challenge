@@ -3,6 +3,8 @@ name: devops-challenge
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  KEY_PATH: ./ansible/config/keys/
+  KEY: ansible-ssh-key.pem
 
 on:
   push:
@@ -69,11 +71,11 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
-          mkdir -p ./ansible/config/keys
-          ls -la ./ansible/*
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
-          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
-          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
+          mkdir -p ${{ env.KEY_PATH }}
+          chmod 400 ${{ env.KEY_PATH }}${{ env.KEY }}/*
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "HERE"
           terraform validate
 
@@ -85,12 +87,14 @@ jobs:
           TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          mkdir -p ./ansible/keys 
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
-          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
-          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
+
           terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
           terraform show -json tfplan > plan.json
+
+          # mkdir -p ./ansible/keys
+          # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
+          # echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
+          # echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
 
       - name: Terraform Apply
         id: apply
