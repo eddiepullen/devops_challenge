@@ -72,13 +72,13 @@
 
     - name: Create the database
       postgresql_db:
-        name: validator_backend
+        name: jumia_phone_validator
       become: true
       become_user: postgres
 
     - name: Import database from file
       postgresql_db:
-        name: validator_backend
+        name: jumia_phone_validator
         state: restore
         target: /tmp/sample.sql
       become: true
@@ -86,8 +86,8 @@
 
     - name: Ensure user has access to the new database
       postgresql_user:
-        db: validator_backend
-        name: validator_backend_user
+        db: jumia_phone_validator
+        name: jumia
         password: dbpassword123!
         priv: ALL
         state: present
@@ -96,7 +96,7 @@
 
     - name: Ensure user does not have unnecessary permissions
       postgresql_user: 
-        name: validator_backend_user
+        name: jumia
         role_attr_flags: NOSUPERUSER,NOCREATEDB
         state: present
       become: true

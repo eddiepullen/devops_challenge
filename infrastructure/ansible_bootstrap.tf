@@ -38,17 +38,6 @@ resource "null_resource" "my_instance" {
   #   inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/lb.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
   # }
 
-  # provisioner "remote-exec" {
-  #   connection {  
-  #     type        = "ssh"
-  #     user        = "ubuntu"
-  #     private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
-  #     host        = module.ansible_instance.public_ip
-  #   }
-    
-  #   inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/microservice.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
-  # }
-
   provisioner "remote-exec" {
     connection {  
       type        = "ssh"
@@ -59,4 +48,15 @@ resource "null_resource" "my_instance" {
     
     inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/db.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
   }
+
+  # provisioner "remote-exec" {
+  #   connection {  
+  #     type        = "ssh"
+  #     user        = "ubuntu"
+  #     private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
+  #     host        = module.ansible_instance.public_ip
+  #   }
+    
+  #   inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/microservice.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
+  # }
 }
