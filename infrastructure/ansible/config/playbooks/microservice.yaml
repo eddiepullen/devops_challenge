@@ -114,7 +114,7 @@
 
     - name: Remove docker images
       shell: 
-        docker rmi -f $(docker images -aq)
+        docker system prune -af
         
     - name: Pull frontend image
       shell: 
@@ -131,10 +131,6 @@
     - name: Stop running backend container
       shell: 
         docker ps -q --filter ancestor="992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend" | xargs -r docker stop
-
-    - name: Remove exited containers
-      shell: 
-        docker container prune -f
 
     - name: Run backend container
       shell: 

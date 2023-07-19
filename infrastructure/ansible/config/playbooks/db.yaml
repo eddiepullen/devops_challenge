@@ -3,30 +3,30 @@
   vars:
     created_username: ubuntu
   tasks:
-    # - name: Allow user to run sudo commands without password
-    #   lineinfile:
-    #     path: /etc/sudoers
-    #     state: present
-    #     line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
-    #     validate: 'visudo -cf %s'
-    #   become: true
+    - name: Allow user to run sudo commands without password
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+      become: true
 
-    # - name: Disable password authentication for root
-    #   lineinfile:
-    #     path: /etc/ssh/sshd_config
-    #     state: present
-    #     regexp: '^#?PermitRootLogin'
-    #     line: 'PermitRootLogin prohibit-password'
-    #   become: true
-    #   become_method: sudo
+    - name: Disable password authentication for root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+      become: true
+      become_method: sudo
 
-    # - name: Allow all access to SSH
-    #   ufw:
-    #     rule: allow
-    #     port: '22'
-    #     proto: tcp
-    #   become: true
-    #   become_method: sudo
+    - name: Allow all access to SSH
+      ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+      become: true
+      become_method: sudo
 
     - name: Allow all access to Potgres
       ufw:
@@ -36,12 +36,12 @@
       become: true
       become_method: sudo
 
-    # - name: UFW - Enable and deny by default
-    #   ufw:
-    #     state: enabled
-    #     default: deny
-    #   become: true
-    #   become_method: sudo
+    - name: UFW - Enable and deny by default
+      ufw:
+        state: enabled
+        default: deny
+      become: true
+      become_method: sudo
 
     - name: copy the sql file to the db
       copy:
@@ -67,8 +67,26 @@
       become: true
       become_method: sudo
     
-    # - name: Ensure the PostgreSQL service is running
-    #   service: name=postgresql state=started enabled=yes
+    - name: "Allow md5 connection for the db user"
+      postgresql_pg_hba:
+        dest: "/etc/postgresql/14/main/pg_hba.conf"
+        contype: host
+        databases: all
+        method: md5
+        users: all
+        create: true
+      become: yes
+      become_user: postgres
+      notify: restart postgres
+
+    - name: "Start and enable services"
+      service: 
+        state: started 
+
+
+  handlers:
+    - name: restart postgres
+      service: name=postgresql state=restarted
 
     - name: Create the database
       postgresql_db:
