@@ -112,6 +112,10 @@
       shell: 
         aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 992122884453.dkr.ecr.eu-central-1.amazonaws.com
 
+    - name: Remove docker images
+      shell: 
+        docker rmi -f $(docker images -aq)
+        
     - name: Pull frontend image
       shell: 
         docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest
