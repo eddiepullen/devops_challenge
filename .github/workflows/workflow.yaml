@@ -28,8 +28,8 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push the image to Amazon ECR
-        id: build-image
+      - name: Build, tag, and push the frontend image to Amazon ECR
+        id: build-frontned
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: validator-frontend
@@ -38,6 +38,19 @@ jobs:
           aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
           # Build a docker container and push it to ECR 
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag, and push the frontend image to Amazon ECR
+        id: build-backend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: validator-backend
+          IMAGE_TAG: latest
+        run: |
+          aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-backend/
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
@@ -60,8 +73,6 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
           echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
           echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
-          pwd 
-          ls -la ./ansible/keys 
           terraform validate
 
       - name: Terraform Plan

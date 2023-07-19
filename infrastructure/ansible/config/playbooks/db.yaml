@@ -2,15 +2,17 @@
 - hosts: db_server
   vars:
     created_username: ubuntu
+    db_user: validator_backend
+    db_name: validator_backend
+    db_password: dbpassword
   tasks:
-    # - name: Allow user to run sudo commands without password
-    #   community.general.sudoers:
-    #     name: "{{ created_username }}"-sudo-allow
-    #     state: present
-    #     user: "{{ created_username }}"
-    #     commands: ALL
-    #     nopassword: true
-    #   become: true
+    - name: Allow user to run sudo commands without password
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+      become: true
 
     - name: Disable password authentication for root
       lineinfile:
@@ -19,6 +21,7 @@
         regexp: '^#?PermitRootLogin'
         line: 'PermitRootLogin prohibit-password'
       become: true
+      become_method: sudo
 
     - name: Allow all access to SSH
       ufw:
@@ -26,73 +29,159 @@
         port: '22'
         proto: tcp
       become: true
+      become_method: sudo
+
+    - name: Allow all access to Potgres
+      ufw:
+        rule: allow
+        port: '5432'
+        proto: tcp
+      become: true
+      become_method: sudo
 
     - name: UFW - Enable and deny by default
       ufw:
         state: enabled
         default: deny
       become: true
+      become_method: sudo
 
-    - name: Update apt and install Postgres
+    # - name: Install dependencies for PostgreSQL
+    #   apt: name={{ item }} update_cache=true state=latest
+    #   with_items:
+    #   - bash
+    #   - openssl
+    #   - libssl-dev
+    #   - libssl-doc
+      
+    # - name: Install PostgreSQL 
+    #   apt: name={{ item }} update_cache=true state=present
+    #   with_items:
+    #   - postgresql
+    #   - postgresql-contrib
+    #   - libpq-dev
+    #   - python3-psycopg2
+    
+    # - name: Ensure the PostgreSQL service is running
+    #   service: name=postgresql state=started enabled=yes
+
+
+    # - name: Create the database specified in vars
+    #   become: true
+    #   become_user: postgres
+    #   postgresql_db: name={{ db_name }}
+    #         template='template0'
+    #         state=present
+
+    # - name: Ensure user has access to the new database
+    #   become: true
+    #   become_user: postgres
+    #   postgresql_user: db={{ db_name }}
+    #         name={{ db_user }}
+    #         password={{ db_password }}
+    #         priv=ALL
+    #         state=present
+
+    # - name: Ensure user does not have unnecessary permissions
+    #   become: true
+    #   become_user: postgres
+    #   postgresql_user: name={{ db_user }}
+    #         role_attr_flags=NOSUPERUSER,NOCREATEDB
+    #         state=present
+
+
+
+    # - name: Update apt and install Postgres
+    #   apt:
+    #     pkg:
+    #       - postgres
+    #     state: latest
+    #     update_cache: true
+    #   become: true
+    #   become_method: sudo
+
+    - name: Update apt repo and cache on all Ubuntu boxes
       apt:
-        pkg:
-          - postgres
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+
+    - name: Upgrade all packages on servers
+      apt:
+        upgrade: dist
+        force_apt_get: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - wget
+          - python3-psycopg2
+          - acl
         state: latest
-        update_cache: true
-      become: true
 
-  #     become: true
+    - name: Set up Postgres 14 repo
+      shell: |
+        echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
+        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+      args:
+        warn: no
 
-  #   - name: UFW - Enable and deny by default
-  #     ufw:
-  #       state: enabled
-  #       default: deny
-  #     become: true
+    - name: Install postgresql
+      apt:
+        name: postgresql-14
+        update_cache: yes
+      notify:
+        - Enable Postgresql
 
-  #   - name: Update apt and install HAProxy
-  #     apt:
-  #       pkg:
-  #         - haproxy
-  #       state: latest
-  #       update_cache: true
-  #     become: true
+    - name: Ensure PostgreSQL is listening on *
+      lineinfile:
+        dest: /etc/postgresql/14/main/postgresql.conf
+        regexp: '^listen_addresses\s*='
+        line: "listen_addresses='*'"
+        state: present
+      notify: Restart Postgresql
 
-  #   - name: copy the haproxy config to the lb
-  #     template:
-  #       src: ~/ansible/templates/haproxy.cfg
-  #       dest: /etc/haproxy/haproxy.cfg
-  #       owner: root
-  #       group: root
-  #     notify:
-  #     - Restart HAProxy
-  #     become: true
+    - name: Add new configuration to "pg_hba.conf"
+      blockinfile:
+        dest: /etc/postgresql/14/main/pg_hba.conf
+        block: |
+          host    all             all             0.0.0.0/0                md5
+          host    all             all             ::/0                     md5
+      notify: Restart Postgresql
 
-  # handlers:
-  #   - name: Restart HAProxy
-  #     service:
-  #       name: haproxy
-  #       state: restarted
-  #     become: true
+    - name: Change peer identification to trust
+      shell: /bin/sed -i '/^local/s/peer/trust/' /etc/postgresql/14/main/pg_hba.conf
+      args:
+        warn: no
+      notify: Restart Postgresql
 
+    - name: Create a Superuser PostgreSQL database user
+      become: yes
+      become_user: postgres
+      postgresql_user:
+        name: '{{ postgres_root_user }}'
+        password: '{{ postgres_root_pass }}'
+        role_attr_flags: CREATEDB,SUPERUSER,CREATEROLE
+        encrypted: yes
+        state: present
 
+  handlers:
+    - name: Restart Postgresql
+      systemd:
+        name: postgresql
+        state: restarted
 
-    # - name: Creates ansible directory
-    #   file:
-    #     path: /home/ubuntu/ansible/playbooks
-    #     state: directory
-    #     owner: "{{ created_username }}"
-    #     group: "{{ created_username }}"
+    - name: Start Postgresql
+      systemd:
+        name: postgresql
+        state: started
 
-    # - name: copy the lb ssh key to control node
-    #   copy:
-    #     src: keys/lb-ssh-key.pem
-    #     dest: /home/ubuntu/ansible/lb-ssh-key.pem
-    #     owner: "{{ created_username }}"
-    #     group: "{{ created_username }}"
+    - name: Stop Postgresql
+      systemd:
+        name: postgresql
+        state: stopped
 
-    # - name: copy the db ssh key to control node
-    #   copy:
-    #     src: keys/db-ssh-key.pem
-    #     dest: /home/ubuntu/ansible/db-ssh-key.pem
-    #     owner: "{{ created_username }}"
-    #     group: "{{ created_username }}"
+    - name: Enable Postgresql
+      systemd:
+        name: postgresql
+        enabled: yes

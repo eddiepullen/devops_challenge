@@ -1,4 +1,4 @@
-# Use Terraform to bootstrap ansible control node buy installing ansible
+# Use Terraform to bootstrap ansible control node by installing ansible
 # and copying all the required ansible files for the workers to the ansible
 # control node and then use Terraform to tell the control node to configure
 # the worker nodes
@@ -15,7 +15,7 @@ resource "null_resource" "my_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
+      private_key = file("./ansible/config/keys/ansible-ssh-key.pem")
       host        = module.ansible_instance.public_ip
     }
     
@@ -37,25 +37,25 @@ resource "null_resource" "my_instance" {
   #   inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/lb.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
   # }
 
-  provisioner "remote-exec" {
-    connection {  
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
-      host        = module.ansible_instance.public_ip
-    }
-    
-    inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/microservice.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
-  }
-
   # provisioner "remote-exec" {
   #   connection {  
   #     type        = "ssh"
   #     user        = "ubuntu"
-  #     private_key = file("${path.module}/ansible/config/keys/db-ssh-key.pem")
+  #     private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
   #     host        = module.ansible_instance.public_ip
   #   }
     
-  #   inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/db.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
+  #   inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/microservice.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
   # }
+
+  provisioner "remote-exec" {
+    connection {  
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("${path.module}/ansible/config/keys/db-ssh-key.pem")
+      host        = module.ansible_instance.public_ip
+    }
+    
+    inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/db.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
+  }
 }

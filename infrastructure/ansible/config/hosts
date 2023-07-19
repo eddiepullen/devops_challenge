@@ -1,5 +1,5 @@
 [lb_server] 
-lb ansible_host=10.0.2.10
+lb ansible_host=10.0.1.10
 
 [lb_server:vars]
 ansible_ssh_user=ubuntu

@@ -51,21 +51,24 @@
       become: true
       become_method: sudo
 
-    - name: Update the apt repository
-      shell: 
-        apt-get update
-      become: true
-      become_method: sudo
-        
-    - name: Make directory for Docker official GPG key
-      shell: 
-        mkdir -m 0755 -p /etc/apt/keyrings
+    - name: Update apt packages
+      apt:
+        update_cache: yes
       become: true
       become_method: sudo
 
+    - name: Make directory for Docker official GPG key
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      become: true
+
     - name: Add Docker official GPG key
       shell: 
-        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --batch --yes --dearmor -o /etc/apt/keyrings/docker.gpg
       become: true
       become_method: sudo
 
@@ -81,14 +84,46 @@
       become: true
       become_method: sudo
 
-    - name: Update the apt repository
-      shell: 
-        sudo apt-get update
+    - name: Install Docker
+      apt:
+        pkg:
+          - docker-ce 
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+          - unzip
+          - awscli
+        state: latest
+        update_cache: true
       become: true
       become_method: sudo
 
-    - name: Install Docker
-      shell: 
-        apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+    - name: Change docker.sock file permissions
+      file:
+        path: /var/run/docker.sock
+        owner: root
+        group: root
+        mode: '0666'
       become: true
       become_method: sudo
+
+    - name: Authenticate against AWS ECR
+      shell: 
+        aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 992122884453.dkr.ecr.eu-central-1.amazonaws.com
+
+    - name: Pull frontend image
+      shell: 
+        docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest
+
+    - name: Stop running frontned container
+      shell: 
+        docker ps -q --filter ancestor="992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend" | xargs -r docker stop
+
+    - name: Remove exited containers
+      shell: 
+        docker rm -v $(docker ps -a -q -f status=exited)
+
+    - name: Run frontend container
+      shell: 
+        docker run -d --publish 80:80 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest

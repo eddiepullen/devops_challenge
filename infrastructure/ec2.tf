@@ -50,6 +50,13 @@ module "microservice_ec2_instance" {
   subnet_id                   = element(module.vpc_devops_challenge.private_subnets, 0)
   private_ip                  = var.microservice_ec2_instance.private_ip
 
+  create_iam_instance_profile = true
+  iam_role_description        = "IAM role for EC2 instance to access ECR"
+  iam_role_policies = {
+    AmazonEC2ContainerRegistryFullAccess = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
+    AmazonEC2ContainerServiceforEC2Role  = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+  }
+
   tags = var.microservice_ec2_instance.tags
 }
 
