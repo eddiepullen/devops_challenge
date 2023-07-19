@@ -79,6 +79,7 @@ jobs:
           cat ${{ env.KEY_PATH }}${{ env.KEY }}
           terraform validate
 
+          
       - name: Terraform Plan
         id: plan
         shell: bash
