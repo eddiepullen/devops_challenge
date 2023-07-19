@@ -16,7 +16,7 @@ resource "null_resource" "my_instance" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem1")
+      private_key = file("${path.module}/ansible/config/keys/ansible-ssh-key.pem")
       host        = module.ansible_instance.public_ip
     }
     
