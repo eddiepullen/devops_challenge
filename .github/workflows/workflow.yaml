@@ -69,7 +69,7 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
-          mkdir -p ./ansible/keys 
+          mkdir -p ./ansible/config/keys 
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
           # echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
           echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
