@@ -75,7 +75,6 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 440 ${{ env.KEY_PATH }}/*
           terraform validate
 
 
@@ -99,6 +98,7 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 440 ${{ env.KEY_PATH }}/*
           ls -la ${{ env.KEY_PATH }}${{ env.KEY }}
+
           terraform apply -auto-approve tfplan
+# chmod 440 ${{ env.KEY_PATH }}/*
