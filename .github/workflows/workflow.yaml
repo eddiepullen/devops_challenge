@@ -69,10 +69,12 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
-          mkdir -p ./ansible/config/keys 
+          mkdir -p ./ansible/config/keys
+          ls -la ./ansible/*
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
-          # echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
+          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
           echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
+          echo "HERE"
           terraform validate
 
       - name: Terraform Plan
