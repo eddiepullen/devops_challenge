@@ -21,6 +21,7 @@ variable "vpc" {
     name               = string
     cidr               = string
     public_subnets     = list(string)
+    private_subnets     = list(string)
     enable_nat_gateway = bool
     enable_vpn_gateway = bool
     tags               = map(string)
@@ -33,6 +34,14 @@ variable "ansible_security_group_ingress" {
 }
 
 variable "ansible_security_group_egress" {
+  type = list
+}
+
+variable "microservice_security_group_ingress" {
+  type = list
+}
+
+variable "microservice_security_group_egress" {
   type = list
 }
 
@@ -62,6 +71,17 @@ variable "ansible_instance" {
     private_ip                  = string
     monitoring                  = bool
     associate_public_ip_address = bool
+    tags                        = map(string)
+  })
+}
+
+variable "microservice_ec2_instance" {
+  type = object({
+    name                        = string
+    instance_type               = string
+    key_name                    = string
+    private_ip                  = string
+    monitoring                  = bool
     tags                        = map(string)
   })
 }

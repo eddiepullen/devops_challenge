@@ -1,15 +1,16 @@
 ---
-- hosts: lb_server
+- hosts: db_server
   vars:
     created_username: ubuntu
   tasks:
-    - name: Create a new regular user with sudo privileges
-      user:
-        name: "{{ created_username }}"
-        state: present
-        groups: sudo
-        append: true
-        create_home: true
+    # - name: Allow user to run sudo commands without password
+    #   community.general.sudoers:
+    #     name: "{{ created_username }}"-sudo-allow
+    #     state: present
+    #     user: "{{ created_username }}"
+    #     commands: ALL
+    #     nopassword: true
+    #   become: true
 
     - name: Disable password authentication for root
       lineinfile:
@@ -20,28 +21,30 @@
       become: true
 
     - name: Allow all access to SSH
-      community.general.ufw:
+      ufw:
         rule: allow
         port: '22'
         proto: tcp
       become: true
 
-  #   - name: Allow all access to HTTP
-  #     community.general.ufw:
-  #       rule: allow
-  #       port: '80'
-  #       proto: tcp
-  #     become: true
+    - name: UFW - Enable and deny by default
+      ufw:
+        state: enabled
+        default: deny
+      become: true
 
-  #   - name: Allow all access to HTTPS
-  #     community.general.ufw:
-  #       rule: allow
-  #       port: '443'
-  #       proto: tcp
+    - name: Update apt and install Postgres
+      apt:
+        pkg:
+          - postgres
+        state: latest
+        update_cache: true
+      become: true
+
   #     become: true
 
   #   - name: UFW - Enable and deny by default
-  #     community.general.ufw:
+  #     ufw:
   #       state: enabled
   #       default: deny
   #     become: true

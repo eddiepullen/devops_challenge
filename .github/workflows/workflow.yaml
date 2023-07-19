@@ -28,25 +28,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      # - name: BUild and push image to ECR
-      #   uses: appleboy/docker-ecr-action@master
-      #   with:
-      #     access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     registry: ${{ steps.login-ecr.outputs.registry }}
-      #     repo: devops-challenge
-      #     region: eu-central-1
-      #     dockerfile: .
-      #     context: validator-frontend
-      #     tags: ${{ github.ref_name }}-0.0.${{ github.run_number }}
-
-  
       - name: Build, tag, and push the image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: validator-frontend
-          IMAGE_TAG: ${{ github.ref_name }}-0.0.${{ github.run_number }}
+          IMAGE_TAG: latest
         run: |
           aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1
           # Build a docker container and push it to ECR 
@@ -54,62 +41,47 @@ jobs:
           echo "Pushing image to ECR..."
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # - name: Build and push image to ECR
-      #   uses: vitr/actions-build-and-upload-to-ecs@master
-      #   with:
-      #     access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     account_id: ${{ secrets.AWS_ACCOUNT_ID }}
-      #     path: ./validator-frontend
-      #     repo: devops-challenge
-      #     region: eu-central-1
-      #     tags: ${{ github.ref_name }}-0.0.${{ github.run_number }}
-      #     create_repo: true
-
-      # - name: Checkout repository
-      #   uses: actions/checkout@v3.5.3
-        
-      # - name: Terraform Init
-      #   id: init
-      #   shell: bash
-      #   working-directory: infrastructure
-      #   run: |
-      #     terraform init -input=false -backend-config=../environment/backend.conf
-      #   env: 
-      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Terraform Init
+        id: init
+        shell: bash
+        working-directory: infrastructure
+        run: |
+          terraform init -input=false -backend-config=../environment/backend.conf
+        env: 
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             
-      # - name: Terraform Validate
-      #   id: validate
-      #   shell: bash
-      #   working-directory: infrastructure
-      #   run: |
-      #     mkdir -p ./ansible/keys 
-      #     echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
-      #     echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
-      #     echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
-      #     pwd 
-      #     ls -la ./ansible/keys 
-      #     terraform validate
+      - name: Terraform Validate
+        id: validate
+        shell: bash
+        working-directory: infrastructure
+        run: |
+          mkdir -p ./ansible/keys 
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
+          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
+          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
+          pwd 
+          ls -la ./ansible/keys 
+          terraform validate
 
-      # - name: Terraform Plan
-      #   id: plan
-      #   shell: bash
-      #   working-directory: infrastructure
-      #   env:
-      #     TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #   run: |
-      #     mkdir -p ./ansible/keys 
-      #     echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
-      #     echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
-      #     echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
-      #     terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
-      #     terraform show -json tfplan > plan.json
+      - name: Terraform Plan
+        id: plan
+        shell: bash
+        working-directory: infrastructure
+        env:
+          TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          mkdir -p ./ansible/keys 
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
+          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
+          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
+          terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
+          terraform show -json tfplan > plan.json
 
-      # - name: Terraform Apply
-      #   id: apply
-      #   shell: bash
-      #   working-directory: infrastructure
-      #   run: |
-      #     terraform apply -auto-approve tfplan
+      - name: Terraform Apply
+        id: apply
+        shell: bash
+        working-directory: infrastructure
+        run: |
+          terraform apply -auto-approve tfplan

@@ -7,6 +7,7 @@ module "vpc_devops_challenge" {
 
   azs             = ["${var.region}a"]
   public_subnets  = var.vpc.public_subnets
+  private_subnets = var.vpc.private_subnets
 
   enable_nat_gateway = var.vpc.enable_nat_gateway
   enable_vpn_gateway = var.vpc.enable_vpn_gateway

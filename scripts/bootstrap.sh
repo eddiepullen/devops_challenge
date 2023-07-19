@@ -6,7 +6,7 @@ key_path="../infrastructure/ansible/config/keys/"
 bucket_name="devops-challenge-tfstate"
 
 # Declare an array of SSH keys
-keys=("ansible-ssh-key lb-ssh-key db-ssh-key")
+keys=("ansible-ssh-key microservice-ssh-key lb-ssh-key db-ssh-key")
                    
 # Create S3 storage bucket for the Terraform state
 aws s3 mb s3://$bucket_name --region $region
