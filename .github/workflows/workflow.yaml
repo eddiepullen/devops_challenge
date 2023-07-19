@@ -43,57 +43,56 @@ jobs:
       #     echo "Pushing image to ECR..."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # - name: Build, tag, and push the backend image to Amazon ECR
-      #   id: build-backend
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: validator-backend
-      #     IMAGE_TAG: latest
-      #   run: |
-      #     aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
-      #     # Build a docker container and push it to ECR 
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-backend/
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Terraform Init
-        id: init
-        shell: bash
-        working-directory: infrastructure
-        run: |
-          terraform init -input=false -backend-config=../environment/backend.conf
-        env: 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-            
-      - name: Terraform Validate
-        id: validate
-        shell: bash
-        working-directory: infrastructure
-        run: |
-          mkdir -p ${{ env.KEY_PATH }}
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 440 ${{ env.KEY_PATH }}/*
-          terraform validate 
-
-
-      - name: Terraform Plan
-        id: plan
-        shell: bash
-        working-directory: infrastructure
+      - name: Build, tag, and push the backend image to Amazon ECR
+        id: build-backend
         env:
-          TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: validator-backend
+          IMAGE_TAG: latest
         run: |
-          terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
-          terraform show -json tfplan > plan.json
+          aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-backend/
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Terraform Apply
-        id: apply
-        shell: bash
-        working-directory: infrastructure
-        run: |
-          ls -la ${{ env.KEY_PATH }}
-          terraform apply -auto-approve tfplan
+      # - name: Terraform Init
+      #   id: init
+      #   shell: bash
+      #   working-directory: infrastructure
+      #   run: |
+      #     terraform init -input=false -backend-config=../environment/backend.conf
+      #   env: 
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            
+      # - name: Terraform Validate
+      #   id: validate
+      #   shell: bash
+      #   working-directory: infrastructure
+      #   run: |
+      #     mkdir -p ${{ env.KEY_PATH }}
+      #     echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+      #     echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+      #     echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+      #     chmod 440 ${{ env.KEY_PATH }}/*
+      #     terraform validate 
+
+
+      # - name: Terraform Plan
+      #   id: plan
+      #   shell: bash
+      #   working-directory: infrastructure
+      #   env:
+      #     TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   run: |
+      #     terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
+      #     terraform show -json tfplan > plan.json
+
+      # - name: Terraform Apply
+      #   id: apply
+      #   shell: bash
+      #   working-directory: infrastructure
+      #   run: |
+      #     terraform apply -auto-approve tfplan

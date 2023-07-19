@@ -28,13 +28,13 @@
     #   become: true
     #   become_method: sudo
 
-    # - name: Allow all access to Potgres
-    #   ufw:
-    #     rule: allow
-    #     port: '5432'
-    #     proto: tcp
-    #   become: true
-    #   become_method: sudo
+    - name: Allow all access to Potgres
+      ufw:
+        rule: allow
+        port: '5432'
+        proto: tcp
+      become: true
+      become_method: sudo
 
     # - name: UFW - Enable and deny by default
     #   ufw:
@@ -43,12 +43,12 @@
     #   become: true
     #   become_method: sudo
 
-    # - name: copy the sql file to the db
-    #   copy:
-    #     src: /home/ubuntu/ansible/templates/sample.sql
-    #     dest: ~/sample.sql
-    #     owner: "{{ created_username }}"
-    #     group: "{{ created_username }}"
+    - name: copy the sql file to the db
+      copy:
+        src: /home/ubuntu/ansible/templates/sample.sql
+        dest: /tmp/sample.sql
+        owner: "{{ created_username }}"
+        group: "{{ created_username }}"
 
     - name: Install dependencies for PostgreSQL and PostgreSQL
       apt:
@@ -61,31 +61,38 @@
           - postgresql-contrib
           - libpq-dev
           - python3-psycopg2
+          - acl
         state: latest
         update_cache: true
       become: true
       become_method: sudo
     
-    - name: Ensure the PostgreSQL service is running
-      service: name=postgresql state=started enabled=yes
+    # - name: Ensure the PostgreSQL service is running
+    #   service: name=postgresql state=started enabled=yes
 
-    - name: Create the database specified in vars
+    - name: Create the database
       postgresql_db:
         name: validator_backend
-        template: ~/sample.sql
-        state: present
       become: true
-      become_method: sudo
+      become_user: postgres
+
+    - name: Import database from file
+      postgresql_db:
+        name: validator_backend
+        state: restore
+        target: /tmp/sample.sql
+      become: true
+      become_user: postgres
 
     - name: Ensure user has access to the new database
-      postgresql_user: 
+      postgresql_user:
         db: validator_backend
         name: validator_backend_user
         password: dbpassword123!
         priv: ALL
         state: present
       become: true
-      become_method: sudo
+      become_user: postgres
 
     - name: Ensure user does not have unnecessary permissions
       postgresql_user: 
@@ -93,5 +100,5 @@
         role_attr_flags: NOSUPERUSER,NOCREATEDB
         state: present
       become: true
-      become_method: sudo
+      become_user: postgres
 
