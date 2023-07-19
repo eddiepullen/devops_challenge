@@ -84,9 +84,9 @@ jobs:
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           mkdir -p ./ansible/keys 
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/keys/ansible-ssh-key.pem
-          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/keys/lb-ssh-key.pem
-          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/keys/db-ssh-key.pem
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ./ansible/config/keys/ansible-ssh-key.pem
+          echo "${{ secrets.LB_SSH_KEY }}" > ./ansible/config/keys/lb-ssh-key.pem
+          echo "${{ secrets.DB_SSH_KEY }}" > ./ansible/config/keys/db-ssh-key.pem
           terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
           terraform show -json tfplan > plan.json
 
