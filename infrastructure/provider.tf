@@ -18,5 +18,6 @@ provider "aws" {
   secret_key = var.secret_key 
 }
 
+# Used for ansible local and remote exec
 provider "null" {
 }

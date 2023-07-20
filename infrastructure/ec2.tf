@@ -36,7 +36,7 @@ module "lb_ec2_instance" {
   tags = var.lb_ec2_instance.tags
 }
 
-# Deploy microservice instance
+# Deploy microservice instance with IAM role to access ECR
 module "microservice_ec2_instance" {
   source   = "terraform-aws-modules/ec2-instance/aws"
 

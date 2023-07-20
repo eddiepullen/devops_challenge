@@ -9,7 +9,7 @@ module "ansible_security_group" {
   egress_with_cidr_blocks  = var.ansible_security_group_egress
 }
 
-# Create a security group for the load balancer instance
+# Create a security group for the microservice instance
 module "microservice_security_group" {
   source = "terraform-aws-modules/security-group/aws"
 

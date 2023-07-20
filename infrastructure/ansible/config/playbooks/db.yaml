@@ -66,7 +66,13 @@
         update_cache: true
       become: true
       become_method: sudo
-    
+
+    - name: Set lidsten address
+      lineinfile: dest=/etc/postgresql/14/main/postgresql.conf
+        regexp="listen_addresses =" line="listen_addresses = '*'" state=present
+      become: yes
+      become_user: postgres
+
     - name: "Allow md5 connection for the db user"
       postgresql_pg_hba:
         dest: "/etc/postgresql/14/main/pg_hba.conf"
@@ -74,19 +80,11 @@
         databases: all
         method: md5
         users: all
+        source: 10.0.2.15
         create: true
       become: yes
       become_user: postgres
-      notify: restart postgres
-
-    - name: "Start and enable services"
-      service: 
-        state: started 
-
-
-  handlers:
-    - name: restart postgres
-      service: name=postgresql state=restarted
+      notify: Restart PostgreSQL
 
     - name: Create the database
       postgresql_db:
@@ -120,3 +118,10 @@
       become: true
       become_user: postgres
 
+  handlers:
+    - name: Restart PostgreSQL
+      service:
+        name: postgresql
+        state: restarted
+      become: true
+      become_method: sudo
