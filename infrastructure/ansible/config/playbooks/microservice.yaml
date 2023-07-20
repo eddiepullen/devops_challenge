@@ -94,6 +94,14 @@
       become: true
       become_method: sudo
 
+    - name: Allow all access to SSH
+      ufw:
+        rule: allow
+        port: '1337'
+        proto: tcp
+      become: true
+      become_method: sudo
+
     - name: Allow access to frontned
       ufw:
         rule: allow
