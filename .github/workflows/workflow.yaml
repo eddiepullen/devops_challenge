@@ -95,4 +95,5 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
+          ls -la  ${{ env.KEY_PATH }}
           terraform apply -auto-approve tfplan
