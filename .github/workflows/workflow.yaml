@@ -19,42 +19,43 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3.5.3
 
-      # - name: Configure AWS credentials
-      #   uses: aws-actions/configure-aws-credentials@v1
-      #   with:
-      #     aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      #     aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      #     aws-region: eu-central-1
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
   
-      # - name: Login to Amazon ECR
-      #   id: login-ecr
-      #   uses: aws-actions/amazon-ecr-login@v1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
 
-      # - name: Build, tag, and push frontend image to ECR
-      #   id: build-frontned
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: validator-frontend
-      #     IMAGE_TAG: latest
-      #   run: |
-      #     aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
-      #     # Build a docker container and push it to ECR 
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build, tag, and push frontend image to ECR
+        id: build-frontned
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: validator-frontend
+          IMAGE_TAG: latest
+        run: |
+          aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
+          # Build a docker container and push it to ECR 
+          docker build --build-arg POSTGRES_HOST={{secrets.POSTGRES_HOST}} POSTGRES_PORT={{secrets.POSTGRES_PORT}} POSTGRES_DB={{secrets.POSTGRES_DB}} POSTGRES_USERNAME={{secrets.POSTGRES_USERNAME}} POSTGRE_PASSWORD={{secrets.POSTGRE_PASSWORD}} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # - name: Build, tag, and push backend image to ECR
-      #   id: build-backend
-      #   env:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: validator-backend
-      #     IMAGE_TAG: latest
-      #   run: |
-      #     aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
-      #     # Build a docker container and push it to ECR 
-      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-backend/
-      #     echo "Pushing image to ECR..."
-      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      - name: Build, tag, and push backend image to ECR
+        id: build-backend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: validator-backend
+          IMAGE_TAG: latest
+        run: |
+          aws ecr create-repository --repository-name $ECR_REPOSITORY --image-scanning-configuration scanOnPush=true --region eu-central-1 || true
+          docker build --build-arg POSTGRES_HOST={{secrets.POSTGRES_HOST}} POSTGRES_PORT={{secrets.POSTGRES_PORT}} POSTGRES_DB={{secrets.POSTGRES_DB}} POSTGRES_USERNAME={{secrets.POSTGRES_USERNAME}} POSTGRE_PASSWORD={{secrets.POSTGRE_PASSWORD}} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
+          # Build a docker container and push it to ECR 
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-backend/
+          echo "Pushing image to ECR..."
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Terraform Init
         id: init
@@ -75,6 +76,7 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.MICROSERVICE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           chmod 400 ${{ env.KEY_PATH }}/*
           terraform validate 
 
@@ -95,9 +97,4 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
-          mkdir -p ${{ env.KEY_PATH }}
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 400 ${{ env.KEY_PATH }}/*
           terraform apply -auto-approve tfplan

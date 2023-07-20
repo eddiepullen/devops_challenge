@@ -3,8 +3,8 @@
   vars:
     created_username: ubuntu
     inventory_hostname: 10.0.2.15
-    ansible_port: 22
-    configured_port: 1337
+    ansible_port: 1337
+    configured_port: 22
   tasks:
 
 
@@ -75,13 +75,6 @@
         regexp: "^Port"
         line: "Port {{ configured_port }}"
       notify: "Restart sshd"
-
-    - name: Setup selinux for alternate SSH port
-      seport:
-        ports: "{{ configured_port }}"
-        proto: "tcp"
-        setype: "ssh_port_t"
-        state: "present"
 
     # We notified "Restart sshd" if we modified the sshd config.
     # By calling flush_handlers, we make sure the handler is run *right now*
