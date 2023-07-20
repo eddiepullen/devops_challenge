@@ -112,18 +112,6 @@
       shell: 
         aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 992122884453.dkr.ecr.eu-central-1.amazonaws.com
 
-    - name: Remove docker images
-      shell: 
-        docker system prune -af
-        
-    - name: Pull frontend image
-      shell: 
-        docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest
-
-    - name: Pull backend image
-      shell: 
-        docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend:latest
-
     - name: Stop running frontned container
       shell: 
         docker ps -q --filter ancestor="992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend" | xargs -r docker stop
@@ -131,6 +119,18 @@
     - name: Stop running backend container
       shell: 
         docker ps -q --filter ancestor="992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend" | xargs -r docker stop
+
+    - name: Remove docker images
+      shell: 
+        docker system prune -af
+
+    - name: Pull frontend image
+      shell: 
+        docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest
+
+    - name: Pull backend image
+      shell: 
+        docker pull 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-backend:latest
 
     - name: Run backend container
       shell: 

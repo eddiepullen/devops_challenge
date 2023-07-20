@@ -3,70 +3,70 @@
   vars:
     created_username: ubuntu
   tasks:
-    - name: Create a new regular user with sudo privileges
-      user:
-        name: "{{ created_username }}"
-        state: present
-        groups: sudo
-        append: true
-        create_home: true
+    # - name: Create a new regular user with sudo privileges
+    #   user:
+    #     name: "{{ created_username }}"
+    #     state: present
+    #     groups: sudo
+    #     append: true
+    #     create_home: true
 
-    - name: Disable password authentication for root
-      lineinfile:
-        path: /etc/ssh/sshd_config
-        state: present
-        regexp: '^#?PermitRootLogin'
-        line: 'PermitRootLogin prohibit-password'
-      become: true
+    # - name: Disable password authentication for root
+    #   lineinfile:
+    #     path: /etc/ssh/sshd_config
+    #     state: present
+    #     regexp: '^#?PermitRootLogin'
+    #     line: 'PermitRootLogin prohibit-password'
+    #   become: true
 
-    - name: Allow all access to SSH
-      community.general.ufw:
-        rule: allow
-        port: '22'
-        proto: tcp
-      become: true
+    # - name: Allow all access to SSH
+    #   community.general.ufw:
+    #     rule: allow
+    #     port: '22'
+    #     proto: tcp
+    #   become: true
 
-    - name: UFW - Enable and deny by default
-      community.general.ufw:
-        state: enabled
-        default: deny
-      become: true
+    # - name: UFW - Enable and deny by default
+    #   community.general.ufw:
+    #     state: enabled
+    #     default: deny
+    #   become: true
 
-    - name: Update apt and install ansible
-      apt:
-        pkg:
-          - ansible
-        state: latest
-        update_cache: true
-      become: true
+    # - name: Update apt and install ansible
+    #   apt:
+    #     pkg:
+    #       - ansible
+    #     state: latest
+    #     update_cache: true
+    #   become: true
 
-    - name: Creates ansible directory in the control node
-      file:
-        path: /home/ubuntu/ansible/playbooks
-        state: directory
-        owner: "{{ created_username }}"
-        group: "{{ created_username }}"
+    # - name: Creates ansible directory in the control node
+    #   file:
+    #     path: /home/ubuntu/ansible/playbooks
+    #     state: directory
+    #     owner: "{{ created_username }}"
+    #     group: "{{ created_username }}"
 
-    - name: Creates templates directory in the control node
-      file:
-        path: /home/ubuntu/ansible/templates
-        state: directory
-        owner: "{{ created_username }}"
-        group: "{{ created_username }}"
+    # - name: Creates templates directory in the control node
+    #   file:
+    #     path: /home/ubuntu/ansible/templates
+    #     state: directory
+    #     owner: "{{ created_username }}"
+    #     group: "{{ created_username }}"
 
-    - name: Creates keys directory in the control node
-      file:
-        path: /home/ubuntu/ansible/keys
-        state: directory
-        owner: "{{ created_username }}"
-        group: "{{ created_username }}"
+    # - name: Creates keys directory in the control node
+    #   file:
+    #     path: /home/ubuntu/ansible/keys
+    #     state: directory
+    #     owner: "{{ created_username }}"
+    #     group: "{{ created_username }}"
 
-    - name: copy the hosts file to the control node
-      copy:
-        src: hosts
-        dest: ~/ansible/hosts
-        owner: "{{ created_username }}"
-        group: "{{ created_username }}"
+    # - name: copy the hosts file to the control node
+    #   copy:
+    #     src: hosts
+    #     dest: ~/ansible/hosts
+    #     owner: "{{ created_username }}"
+    #     group: "{{ created_username }}"
 
     - name: copy the playbooks configs to the control node
       copy:

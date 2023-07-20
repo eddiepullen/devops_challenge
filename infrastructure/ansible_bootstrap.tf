@@ -1,7 +1,7 @@
 # Use Terraform to bootstrap ansible control node by installing ansible
 # and copying all the required ansible files for the workers to the ansible
 # control node and then use Terraform to tell the control node to configure
-# the worker nodes
+# the worker nodes and pull and run the images from ECR on the microservice
 resource "null_resource" "my_instance" {
 
   triggers = {
@@ -24,12 +24,12 @@ resource "null_resource" "my_instance" {
     inline = ["echo 'connected!'"]
   }
 
-  # # Run ansible against the ansible control node and bootstrap it with ansible and required worker config
+  # Run ansible against the ansible control node and bootstrap it with ansible and required worker config
   provisioner "local-exec" {
     command = "ansible-playbook --private-key=${path.module}/ansible/config/keys/ansible-ssh-key.pem --ssh-common-args='-o StrictHostKeyChecking=no' ./ansible/config/master.yaml -u ubuntu -i '${module.ansible_instance.public_ip},' "
   }
 
-  # # Tell ansible control node to run against microservice and configure it
+  # Tell ansible control node to run against microservice and configure it, pull and run the imgaes
   provisioner "remote-exec" {
     connection {  
       type        = "ssh"
