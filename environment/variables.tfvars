@@ -21,6 +21,12 @@ ansible_security_group_ingress = [
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = "0.0.0.0/0"
+  },
+  {
+    from_port   = 1337
+    to_port     = 1337
+    protocol    = "tcp"
+    cidr_blocks = "0.0.0.0/0"
   }
 ]
 
@@ -41,8 +47,20 @@ microservice_security_group_ingress = [
     cidr_blocks = "0.0.0.0/0"
   },
   {
-    from_port   = 80
-    to_port     = 80
+    from_port   = 1337
+    to_port     = 1337
+    protocol    = "tcp"
+    cidr_blocks = "0.0.0.0/0"
+  },
+  {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = "0.0.0.0/0"
+  },
+  {
+    from_port   = 8081
+    to_port     = 8081
     protocol    = "tcp"
     cidr_blocks = "0.0.0.0/0"
   },
@@ -67,6 +85,12 @@ lb_security_group_ingress = [
   {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = "0.0.0.0/0"
+  },
+  {
+    from_port   = 1337
+    to_port     = 1337
     protocol    = "tcp"
     cidr_blocks = "0.0.0.0/0"
   },
@@ -103,6 +127,12 @@ db_security_group_ingress = [
   {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = "0.0.0.0/0"
+  },
+  {
+    from_port   = 1337
+    to_port     = 1337
     protocol    = "tcp"
     cidr_blocks = "0.0.0.0/0"
   }
