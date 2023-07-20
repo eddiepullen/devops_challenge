@@ -92,6 +92,8 @@ jobs:
         id: apply
         shell: bash
         working-directory: infrastructure
+        env:
+          TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
           ls -la  ${{ env.KEY_PATH }}
           export
