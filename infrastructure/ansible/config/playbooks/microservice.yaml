@@ -4,6 +4,7 @@
     created_username: ubuntu
     inventory_hostname: 10.0.2.15
     ansible_port: 22
+    configured_port: 1337
   tasks:
     - name: Set configured port fact
       set_fact:

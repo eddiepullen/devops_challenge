@@ -75,7 +75,8 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 440 ${{ env.KEY_PATH }}/*
+          chmod 400 ${{ env.KEY_PATH }}/*
+          sleep 1
           terraform validate 
 
 
