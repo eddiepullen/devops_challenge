@@ -3,8 +3,8 @@
   vars:
     created_username: ubuntu
     inventory_hostname: 10.0.2.15
-    ansible_port: 1337
-    configured_port: 22
+    ansible_port: 22
+    configured_port: 1337
   tasks:
 
 
