@@ -37,7 +37,7 @@ jobs:
           ECR_REPOSITORY: validator-frontend
           IMAGE_TAG: latest
         run: |
-          aws ecr describe-repositories --repository-names ${$ECR_REPOSITORY} || aws ecr create-repository --repository-name ${$ECR_REPOSITORY}  --region eu-central-1
+          aws ecr describe-repositories --repository-names ${ECR_REPOSITORY} || aws ecr create-repository --repository-name ${ECR_REPOSITORY}  --region eu-central-1
           # Build a docker container and push it to ECR 
           docker build --build-arg POSTGRES_HOST={{secrets.POSTGRES_HOST}} POSTGRES_PORT={{secrets.POSTGRES_PORT}} POSTGRES_DB={{secrets.POSTGRES_DB}} POSTGRES_USERNAME={{secrets.POSTGRES_USERNAME}} POSTGRE_PASSWORD={{secrets.POSTGRE_PASSWORD}} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
           echo "Pushing image to ECR..."
@@ -50,7 +50,7 @@ jobs:
           ECR_REPOSITORY: validator-backend
           IMAGE_TAG: latest
         run: |
-          aws ecr describe-repositories --repository-names ${$ECR_REPOSITORY} || aws ecr create-repository --repository-name ${$ECR_REPOSITORY}  --region eu-central-1
+          aws ecr describe-repositories --repository-names ${ECR_REPOSITORY} || aws ecr create-repository --repository-name ${ECR_REPOSITORY}  --region eu-central-1
           # Build a docker container and push it to ECR 
           docker build --build-arg POSTGRES_HOST={{secrets.POSTGRES_HOST}} POSTGRES_PORT={{secrets.POSTGRES_PORT}} POSTGRES_DB={{secrets.POSTGRES_DB}} POSTGRES_USERNAME={{secrets.POSTGRES_USERNAME}} POSTGRE_PASSWORD={{secrets.POSTGRE_PASSWORD}} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
           echo "Pushing image to ECR..."
