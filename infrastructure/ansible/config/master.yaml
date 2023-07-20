@@ -75,18 +75,18 @@
         owner: "{{ created_username }}"
         group: "{{ created_username }}"
 
-    - name: copy the templates configs to the control node
-      copy:
-        src: templates/
-        dest: ~/ansible/templates/
-        owner: "{{ created_username }}"
-        group: "{{ created_username }}"
+    # - name: copy the templates configs to the control node
+    #   copy:
+    #     src: templates/
+    #     dest: ~/ansible/templates/
+    #     owner: "{{ created_username }}"
+    #     group: "{{ created_username }}"
 
-    - name: copy the required worker keys to control node
-      copy:
-        src: keys/
-        dest: ~/ansible/keys
-        owner: "{{ created_username }}"
-        group: "{{ created_username }}"
-        mode: '0400'
+    # - name: copy the required worker keys to control node
+    #   copy:
+    #     src: keys/
+    #     dest: ~/ansible/keys
+    #     owner: "{{ created_username }}"
+    #     group: "{{ created_username }}"
+    #     mode: '0400'
 
