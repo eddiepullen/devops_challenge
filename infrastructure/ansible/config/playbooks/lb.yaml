@@ -51,28 +51,25 @@
       become: true
       become_method: sudo
 
-    - name: Update apt and install HAProxy
+    - name: Update apt and install Nginx
       apt:
         pkg:
-          - haproxy
+          - nginx
         state: latest
         update_cache: true
       become: true
       become_method: sudo
 
-    - name: copy the haproxy config to the lb
+    - name: copy the nginx config
       copy:
-        src: /home/ubuntu/ansible/templates/haproxy.cfg
-        dest: /etc/haproxy/haproxy.cfg
+        src: /home/ubuntu/ansible/templates/default
+        dest: /etc/nginx/sites-available/default
         owner: root
         group: root
       become: true
       become_method: sudo
-      notify:
-        - Restart HAProxy
 
-  handlers:
-    - name: Restart HAProxy
+    - name: Restart Nginx
       service:
         name: haproxy
         state: restarted

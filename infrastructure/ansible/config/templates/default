@@ -1,0 +1,11 @@
+server {
+    listen 80 default_server;
+    
+    location / {
+       proxy_pass http://10.0.2.15:8081;
+    }
+
+    location /api/v1/ {
+       proxy_pass http://10.0.2.15:8080;
+    }
+}
