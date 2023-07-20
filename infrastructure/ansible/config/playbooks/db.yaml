@@ -3,112 +3,112 @@
   vars:
     created_username: ubuntu
   tasks:
-    # - name: Allow user to run sudo commands without password
-    #   lineinfile:
-    #     path: /etc/sudoers
-    #     state: present
-    #     line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
-    #     validate: 'visudo -cf %s'
-    #   become: true
+    - name: Allow user to run sudo commands without password
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        line: 'ubuntu ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+      become: true
 
-    # - name: Disable password authentication for root
-    #   lineinfile:
-    #     path: /etc/ssh/sshd_config
-    #     state: present
-    #     regexp: '^#?PermitRootLogin'
-    #     line: 'PermitRootLogin prohibit-password'
-    #   become: true
-    #   become_method: sudo
+    - name: Disable password authentication for root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+      become: true
+      become_method: sudo
 
-    # - name: Allow all access to SSH
-    #   ufw:
-    #     rule: allow
-    #     port: '22'
-    #     proto: tcp
-    #   become: true
-    #   become_method: sudo
+    - name: Allow all access to SSH
+      ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+      become: true
+      become_method: sudo
 
-    # - name: Allow all access to Potgres
-    #   ufw:
-    #     rule: allow
-    #     port: '5432'
-    #     proto: tcp
-    #   become: true
-    #   become_method: sudo
+    - name: Allow all access to Potgres
+      ufw:
+        rule: allow
+        port: '5432'
+        proto: tcp
+      become: true
+      become_method: sudo
 
-    # - name: UFW - Enable and deny by default
-    #   ufw:
-    #     state: enabled
-    #     default: deny
-    #   become: true
-    #   become_method: sudo
+    - name: UFW - Enable and deny by default
+      ufw:
+        state: enabled
+        default: deny
+      become: true
+      become_method: sudo
 
-    # - name: copy the sql file to the db
-    #   copy:
-    #     src: /home/ubuntu/ansible/templates/sample.sql
-    #     dest: /tmp/sample.sql
-    #     owner: "{{ created_username }}"
-    #     group: "{{ created_username }}"
+    - name: copy the sql file to the db
+      copy:
+        src: /home/ubuntu/ansible/templates/sample.sql
+        dest: /tmp/sample.sql
+        owner: "{{ created_username }}"
+        group: "{{ created_username }}"
 
-    # - name: Install dependencies for PostgreSQL and PostgreSQL
-    #   apt:
-    #     pkg:
-    #       - bash
-    #       - openssl
-    #       - libssl-dev
-    #       - libssl-doc
-    #       - postgresql
-    #       - postgresql-contrib
-    #       - libpq-dev
-    #       - python3-psycopg2
-    #       - acl
-    #     state: latest
-    #     update_cache: true
-    #   become: true
-    #   become_method: sudo
+    - name: Install dependencies for PostgreSQL and PostgreSQL
+      apt:
+        pkg:
+          - bash
+          - openssl
+          - libssl-dev
+          - libssl-doc
+          - postgresql
+          - postgresql-contrib
+          - libpq-dev
+          - python3-psycopg2
+          - acl
+        state: latest
+        update_cache: true
+      become: true
+      become_method: sudo
 
-    # - name: Set lidsten address
-    #   lineinfile: dest=/etc/postgresql/14/main/postgresql.conf
-    #     regexp="listen_addresses =" line="listen_addresses = '*'" state=present
-    #   become: yes
-    #   become_user: postgres
+    - name: Set lidsten address
+      lineinfile: dest=/etc/postgresql/14/main/postgresql.conf
+        regexp="listen_addresses =" line="listen_addresses = '*'" state=present
+      become: yes
+      become_user: postgres
 
-    # - name: "Allow md5 connection for the db user"
-    #   postgresql_pg_hba:
-    #     dest: "/etc/postgresql/14/main/pg_hba.conf"
-    #     contype: host
-    #     databases: all
-    #     method: md5
-    #     users: all
-    #     source: 10.0.2.15
-    #     create: true
-    #   become: yes
-    #   become_user: postgres
-    #   notify: Restart PostgreSQL
+    - name: "Allow md5 connection for the db user"
+      postgresql_pg_hba:
+        dest: "/etc/postgresql/14/main/pg_hba.conf"
+        contype: host
+        databases: all
+        method: md5
+        users: all
+        source: 10.0.2.15
+        create: true
+      become: yes
+      become_user: postgres
+      notify: Restart PostgreSQL
 
-    # - name: Create the database
-    #   postgresql_db:
-    #     name: jumia_phone_validator
-    #   become: true
-    #   become_user: postgres
+    - name: Create the database
+      postgresql_db:
+        name: jumia_phone_validator
+      become: true
+      become_user: postgres
 
-    # - name: Import database from file
-    #   postgresql_db:
-    #     name: jumia_phone_validator
-    #     state: restore
-    #     target: /tmp/sample.sql
-    #   become: true
-    #   become_user: postgres
+    - name: Import database from file
+      postgresql_db:
+        name: jumia_phone_validator
+        state: restore
+        target: /tmp/sample.sql
+      become: true
+      become_user: postgres
 
-    # - name: Ensure user has access to the new database
-    #   postgresql_user:
-    #     db: jumia_phone_validator
-    #     name: jumia
-    #     password: dbpassword123!
-    #     priv: ALL
-    #     state: present
-    #   become: true
-    #   become_user: postgres
+    - name: Ensure user has access to the new database
+      postgresql_user:
+        db: jumia_phone_validator
+        name: jumia
+        password: dbpassword123!
+        priv: ALL
+        state: present
+      become: true
+      become_user: postgres
 
     - name: Grant privileges on table
       postgresql_privs:

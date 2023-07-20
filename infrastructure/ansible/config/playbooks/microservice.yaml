@@ -6,31 +6,31 @@
     ssh_port: 1337
   tasks:
 
-# Test new ssh port
-    - name: ssh test nc {{ ssh_port }}
-      local_action: shell nc -z -w5 {{ inventory_hostname }} {{ ssh_port }}
-      register: nc_ssh_port
-      failed_when: nc_ssh_port.stdout.find('failed') != -1
-      changed_when: nc_ssh_port.stdout == ""
-      ignore_errors: yes
+# # Test new ssh port
+#     - name: ssh test nc {{ ssh_port }}
+#       local_action: shell nc -z -w5 {{ inventory_hostname }} {{ ssh_port }}
+#       register: nc_ssh_port
+#       failed_when: nc_ssh_port.stdout.find('failed') != -1
+#       changed_when: nc_ssh_port.stdout == ""
+#       ignore_errors: yes
 
-    # Set port to new port if connection success
-    - name: set ansidble_ssh_port
-      set_fact: ansible_ssh_port={{ ssh_port }}
-      when: nc_ssh_port|success
+#     # Set port to new port if connection success
+#     - name: set ansidble_ssh_port
+#       set_fact: ansible_ssh_port={{ ssh_port }}
+#       when: nc_ssh_port|success
 
-    # Fail back to old port if new ssh port fails
-    - name: ssh test nc port {{ old_ssh_port }}
-      local_action: shell nc -z -w5 {{ inventory_hostname }} {{ old_ssh_port }}
-      register: nc_ssh_default
-      changed_when: nc_ssh_default.stdout == ""
-      ignore_errors: yes
-      when: nc_ssh_port|changed
+#     # Fail back to old port if new ssh port fails
+#     - name: ssh test nc port {{ old_ssh_port }}
+#       local_action: shell nc -z -w5 {{ inventory_hostname }} {{ old_ssh_port }}
+#       register: nc_ssh_default
+#       changed_when: nc_ssh_default.stdout == ""
+#       ignore_errors: yes
+#       when: nc_ssh_port|changed
 
-    # Set ansible to old port since new failed
-    - name: set ansible_ssh_port to {{ old_ssh_port }}
-      set_fact: ansible_ssh_port={{ old_ssh_port }}
-      when: nc_ssh_default|success and nc_ssh_port|changed
+#     # Set ansible to old port since new failed
+#     - name: set ansible_ssh_port to {{ old_ssh_port }}
+#       set_fact: ansible_ssh_port={{ old_ssh_port }}
+#       when: nc_ssh_default|success and nc_ssh_port|changed
 
     # # ansible_port can change throughout this role, keep a copy around
     # - name: Set configured port fact
