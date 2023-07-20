@@ -62,9 +62,6 @@ jobs:
         working-directory: infrastructure
         run: |
           terraform init -input=false -backend-config=../environment/backend.conf
-        env: 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             
       - name: Terraform Validate
         id: validate
@@ -94,6 +91,9 @@ jobs:
         id: apply
         shell: bash
         working-directory: infrastructure
+        env: 
+          TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
           ls -la  ${{ env.KEY_PATH }}
+          export
           terraform apply -auto-approve tfplan
