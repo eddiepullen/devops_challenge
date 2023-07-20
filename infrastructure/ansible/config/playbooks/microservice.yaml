@@ -15,7 +15,7 @@
       ignore_errors: yes
 
     # Set port to new port if connection success
-    - name: set ansible_ssh_port
+    - name: set ansidble_ssh_port
       set_fact: ansible_ssh_port={{ ssh_port }}
       when: nc_ssh_port|success
 
