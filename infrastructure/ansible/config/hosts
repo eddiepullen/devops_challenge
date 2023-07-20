@@ -1,19 +1,19 @@
 [lb_server] 
-lb ansible_host=10.0.1.10
+lb ansible_host=10.0.1.10 ansible_port=1337
 
 [lb_server:vars]
 ansible_ssh_user=ubuntu
 ansible_ssh_private_key_file=~/ansible/keys/lb-ssh-key.pem
 
 [microservice_server]
-microservice ansible_host=10.0.2.15
+microservice ansible_host=10.0.2.15 ansible_port=1337
 
 [microservice_server:vars]
 ansible_ssh_user=ubuntu
 ansible_ssh_private_key_file=~/ansible/keys/microservice-ssh-key.pem
 
 [db_server]
-db ansible_host=10.0.2.20
+db ansible_host=10.0.2.20 ansible_port=1337
 
 [db_server:vars]
 ansible_ssh_user=ubuntu
