@@ -146,11 +146,11 @@ vpc = {
    1. Frontend image needs to be named ```validator-frontend``` using ```latest``` tag
    2. Backend image needs to be named ```validator-backend``` using ```latest``` tag
 3. Change the region and bucket name in the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh) script
-4. Run the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh)
-5. Update the [backend.conf](https://github.com/edwardpullen/devops_challenge/blob/main/environment/backend.conf) bucket, key and region
+4. Run the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh) script
+5. Update the [backend.conf](https://github.com/edwardpullen/devops_challenge/blob/main/environment/backend.conf) ```bucket```, ```key``` and ```region```
 6. Update the [variables.tfvars](https://github.com/edwardpullen/devops_challenge/tree/main/environment/variables.tfvars) with your ```region```
-7. Change directory so that you are in the Terraform [infrastructure] location
-8. Initialize the Terraform providers and modules: ```terraform init -backend-config=../environment/backend.conf```
-9. Validate the Terraform code: ```terraform validate```
-10. Run a plan to see what resources will be created: ```terraform plan --var-file=../environment/variables.tfvars```
-11. Run a apply to create the resources: ```terraform apply```
+6. Change directory so that you are in the Terraform [infrastructure] location
+7. Initialize the Terraform providers and modules: ```terraform init -backend-config=../environment/backend.conf```
+8. Validate the Terraform code: ```terraform validate```
+9.  Run a plan to see what resources will be created: ```terraform plan --var-file=../environment/variables.tfvars```
+10. Run a apply to create the resources: ```terraform apply```
