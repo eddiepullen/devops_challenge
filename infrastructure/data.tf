@@ -16,15 +16,3 @@ data "aws_ami" "ubuntu" {
 data "local_file" "ansible_key" {
   filename = "${path.module}/ansible/config/keys/ansible-ssh-key.pem"
 }
-
-data "local_file" "microservice_key" {
-  filename = "${path.module}/ansible/config/keys/microservice-ssh-key.pem"
-}
-
-data "local_file" "db_key" {
-  filename = "${path.module}/ansible/config/keys/db-ssh-key.pem"
-}
-
-data "local_file" "lb_key" {
-  filename = "${path.module}/ansible/config/keys/lb-ssh-key.pem"
-}
