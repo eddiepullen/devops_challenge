@@ -73,7 +73,7 @@ jobs:
           echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.MICROSERVICE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 640 ${{ env.KEY_PATH }}/*
+          chmod 600 ${{ env.KEY_PATH }}/*
           terraform validate 
 
       - name: Terraform Plan
