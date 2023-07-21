@@ -29,7 +29,7 @@ with Terraform and Ansible
 - You will need to have an AWS Account and generate an access key
   - AWS_ACCESS_KEY_ID
   - AWS_SECRET_ACCESS_KEY
-- The AWS keys can be stored as environment variables for Terraform to use:
+- The AWS keys can be set as environment variables for Terraform to use:
   - TF_VAR_access_key
   - TF_VAR_secret_key
 - You will need to have AWS CLI installed locally on your machine
@@ -71,9 +71,74 @@ with Terraform and Ansible
 - Run a remote-exec to connect to the Ansible control instance and run the playbook on the control instance to \
   configure microservice by installing Docker, pulling the images for frontend and backend from ECR and running them
 
+## How the load balancer and microserice communication works
+
+- Frontend is running on port 80 and listening on port 8081
+- Backend is running on port 8080 and listening on port 8080
+- Load balancer is configured to listed on port 80 and uses path based routing
+  - Any requests on ```/``` will be routed to the frontend on port 8081
+  - Any request on ```/api/v1/*``` will be routed to the backend on port 8080
+
+## How the variables are defined
+
+- The approach taken here is to store the variables for each module or resource in the form of an object instead \
+  of having each variable seperate which allows you to understan easily which variable is used for which module \
+  or resource and is more human readable. An example can be seen below
+
+```terraform
+
+module "vpc_devops_challenge" {
+  source = "terraform-aws-modules/vpc/aws"
+
+  name = var.vpc.name
+  cidr = var.vpc.cidr
+
+  azs             = ["${var.region}a"]
+  public_subnets  = var.vpc.public_subnets
+  private_subnets = var.vpc.private_subnets
+
+  enable_nat_gateway = var.vpc.enable_nat_gateway
+  enable_vpn_gateway = var.vpc.enable_vpn_gateway
+
+  tags = var.vpc.tags
+}
+
+variable "vpc" {
+  type = object({
+    name               = string
+    cidr               = string
+    public_subnets     = list(string)
+    private_subnets    = list(string)
+    enable_nat_gateway = bool
+    enable_vpn_gateway = bool
+    tags               = map(string)
+  })
+}
+
+```
+
+- The variable values themself are not stored in the variable but instead use [variables.tfvars](https://github.com/edwardpullen/devops_challenge/tree/main/environment/variables.tfvars) as can be seen below
+
+```teraform
+vpc = {
+  name               = "devops-challenge"
+  cidr               = "10.0.0.0/16"
+  public_subnets     = ["10.0.1.0/24"]
+  private_subnets    = ["10.0.2.0/24"]
+  enable_nat_gateway = true
+  enable_vpn_gateway = false
   
+  tags = {
+    Terraform = "true"
+    Environment = "prod"
+  }
+}
+```
+
+- The above way of storing variables seperate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastrucutre/variable.tf) file allows for easy deployment if you where to \
+  deploy another environment like staging or production.
+
 ## How the Deployment process works
 
 1. Clone the repositroy to your local machine
 2. Run the [bootsrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh)
-
