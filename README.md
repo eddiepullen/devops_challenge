@@ -152,5 +152,6 @@ vpc = {
 7. Change directory so that you are in the Terraform [infrastructure] location
 8. Initialize the Terraform providers and modules: ```terraform init -backend-config=../environment/backend.conf```
 9. Validate the Terraform code: ```terraform validate```
-11.  Run a plan to see what resources will be created: ```terraform plan --var-file=../environment/variables.tfvars```
+10. Run a plan to see what resources will be created: ```terraform plan --var-file=../environment/variables.tfvars```
 11. Run a apply to create the resources: ```terraform apply```
+12. Once Terraform has finished ran it will output the http url to access the app on
