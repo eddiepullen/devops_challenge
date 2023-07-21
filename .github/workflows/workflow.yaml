@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - main
-
+      
 jobs:
   devops-challenge:
     runs-on: ubuntu-latest
@@ -68,8 +68,7 @@ jobs:
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.MICROSERVICE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           chmod 600 ${{ env.KEY_PATH }}/*
-          terraform validate
-           
+          terraform validate 
       - name: Terraform Plan
         id: plan
         shell: bash
@@ -88,4 +87,6 @@ jobs:
         env:
           TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           terraform apply -auto-approve tfplan
+    #-var ansible_ssh_key=${{ secrets.ANSIBLE_SSH_KEY }}
