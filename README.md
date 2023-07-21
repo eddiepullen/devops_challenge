@@ -17,8 +17,8 @@ with Terraform and Ansible
 
 ## How the deployment works
 
-- The repository contains as validator-fronted and a validator-backend which each have their own Dockerfile
-- The images are build and pushed to AWS ECR using the GitHub action
+- The repository contains as validator-frontend and a validator-backend which each have their own Dockerfile
+- The images are built and pushed to AWS ECR using a GitHub action
 - Terraform is then triggered to initialize, validate, plan and apply the infrastructure
 - During the Terraform run it calls on Ansible to bootstrap the Ansible control node
 - During the Terraform run it also connects to the Ansible control node and configures the rest of the EC2 instances
@@ -74,11 +74,11 @@ with Terraform and Ansible
 
 ## How the load balancer and microservices communication works
 
-- Frontend is running on port 80 and listening on port 8081
-- Backend is running on port 8080 and listening on port 8080
-- Load balancer is configured to listed on port 80 and uses path based routing
-  - Any requests on ```/``` will be routed to the frontend on port 8081
-  - Any request on ```/api/v1/*``` will be routed to the backend on port 8080
+- Frontend is running on port ```80``` and listening on port ```8081```
+- Backend is running on port ```8080``` and listening on port ```8080```
+- Load balancer is configured to listed on port ```80``` and uses path based routing
+  - Any requests on ```/``` will be routed to the frontend on port ```8081```
+  - Any request on ```/api/v1/*``` will be routed to the backend on port ```8080```
 
 ## How the variables are defined
 
@@ -137,9 +137,9 @@ vpc = {
 ```
 
 - The above way of storing variables separate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/variables.tf) file allows for easy deployment if you where \
-  to deploy another environment like staging or production.
+  to deploy another environment like development or staging.
 
-## How the Deployment process works
+## How the deployment process works
 
 1. Clone the repository to your local machine
 2. You will need to build and push the images to ECR 
