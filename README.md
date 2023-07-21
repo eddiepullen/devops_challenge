@@ -76,7 +76,7 @@ with Terraform and Ansible
 
 - Frontend is running on port ```80``` and listening on port ```8081```
 - Backend is running on port ```8080``` and listening on port ```8080```
-- Load balancer is configured to listed on port ```80``` and uses path based routing
+- Load balancer is configured to listen on port ```80``` and uses path based routing
   - Any requests on ```/``` will be routed to the frontend on port ```8081```
   - Any request on ```/api/v1/*``` will be routed to the backend on port ```8080```
 
