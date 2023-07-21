@@ -73,7 +73,7 @@ jobs:
           echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           echo "${{ secrets.MICROSERVICE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          chmod 400 ${{ env.KEY_PATH }}/*
+          chmod 640 ${{ env.KEY_PATH }}/*
           terraform validate 
 
       - name: Terraform Plan
@@ -96,4 +96,5 @@ jobs:
           TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
-          terraform apply -auto-approve tfplan -var ansible_ssh_key=${{ secrets.ANSIBLE_SSH_KEY }}
+          terraform apply -auto-approve tfplan
+    #-var ansible_ssh_key=${{ secrets.ANSIBLE_SSH_KEY }}
