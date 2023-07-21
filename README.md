@@ -174,8 +174,8 @@ vpc = {
 - Deploy Nginx Ingress controller using ArgoCD
 - Deploy ArgoCD Image Updater into the EKS cluster using ArgoCD
 - Configure GitHub workflow to build and push images to ECR
-- Configure Image Updater to pull images from ECR with regex tag
-  - Image updater will then monitor for new images
+- Configure Image Updater to monitor images from ECR with regex tag
+  - Image updater will monitor for new images
   - Notify ArgoCD when there is a new image
   - ArgoCD will deploy the new image into the EKS cluster
 - Add Grafana for Observability to the mix with
