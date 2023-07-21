@@ -11,6 +11,10 @@ keys=("ansible-ssh-key microservice-ssh-key lb-ssh-key db-ssh-key")
 # Create S3 storage bucket for the Terraform state
 aws s3 mb s3://$bucket_name --region $region
 
+# Create the SSH Keys dicretory
+mkdir -p $key_path  
+chmod 400 $key_path/* 
+
 # Create SSH key pairs
 for key in ${keys[@]}; do
   aws ec2 create-key-pair --key-name $key --key-type rsa \
@@ -18,6 +22,5 @@ for key in ${keys[@]}; do
   --output text > $key_path$key.pem
 done
 
-mkdir -p $key_path  
-chmod 400 $key_path/* 
+
 
