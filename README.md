@@ -70,7 +70,7 @@ with Terraform and Ansible
   configure the database with Postgres, create a database and user and import the sample database sql file
 - Run a remote-exec to connect to the Ansible control instance and run the playbook on the control instance to \
   configure microservice by installing Docker, pulling the images for frontend and backend from ECR and running them
-- Here is the location of the [Ansible bootsrap](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible_bootstrap.tf) for reference
+- Here is the location of the [Ansible bootstrap](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible_bootstrap.tf) for reference
 
 ## How the load balancer and microserice communication works
 
