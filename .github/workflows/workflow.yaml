@@ -88,4 +88,8 @@ jobs:
           TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.LB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.DB_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          echo "${{ secrets.MICROSERVICE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
+          chmod 600 ${{ env.KEY_PATH }}/*
           terraform apply -auto-approve tfplan
