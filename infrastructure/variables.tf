@@ -15,6 +15,11 @@ variable "secret_key" {
   type        = string
 }
 
+variable "ansible_ssh_key" {
+  description = "Ansible SSH key"
+  type        = string
+}
+
 # VPC related variables
 variable "vpc" {
   type = object({
