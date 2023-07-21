@@ -81,8 +81,8 @@ jobs:
         shell: bash
         working-directory: infrastructure
         run: |
-          terraform plan -out tfplan -input=false -lock=false
-          terraform show -json tfplan > plan.json --var-file=../environment/variables.tfvars
+          terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
+          terraform show -json tfplan > plan.json 
 
       - name: Terraform Apply
         id: apply
@@ -90,3 +90,4 @@ jobs:
         working-directory: infrastructure
         run: |
           terraform apply -auto-approve tfplan
+          rm -rf ${{ env.KEY_PATH }}
