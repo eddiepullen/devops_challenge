@@ -87,7 +87,6 @@ jobs:
         run: |
           terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
           terraform show -json tfplan > plan.json
-
       - name: Terraform Apply
         id: apply
         shell: bash
@@ -96,4 +95,3 @@ jobs:
           TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
           terraform apply -auto-approve tfplan
-          rm -rf ${{ env.KEY_PATH }}

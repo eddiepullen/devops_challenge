@@ -12,3 +12,7 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 }
+
+data "local_file" "ansible_key" {
+  filename = "${path.module}/ansible/config/keys/ansible-ssh-key.pem"
+}
