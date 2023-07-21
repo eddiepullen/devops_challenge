@@ -331,8 +331,3 @@
     - name: Run frontend container
       shell: 
         docker run -d --publish 8081:80 992122884453.dkr.ecr.eu-central-1.amazonaws.com/validator-frontend:latest
-
-    # - name: Restart sshd
-    #   service:
-    #     name: sshd
-    #     state: restarted
