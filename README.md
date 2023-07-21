@@ -13,18 +13,18 @@ with Terraform and Ansible
 - EC2 instance for the load balancer running Nginx as a reverse proxy
 - EC2 instance for the database that runs PostgreSQL
 - EC2 instance for the Ansible control node
-- EC2 instance for the microservice that hosts the frontned and backened
+- EC2 instance for the microservice that hosts the frontend and backend
 
-## How this deployment works
+## How the deployment works
 
-- The repository contains as validator-frontned and a validator-backened which each have their own Dockerfile
+- The repository contains as validator-fronted and a validator-backend which each have their own Dockerfile
 - The images are build and pushed to AWS ECR using the GitHub action
-- Terraform is then triggered to initialize, validate, plan and apaply the infrastrucutre
+- Terraform is then triggered to initialize, validate, plan and apply the infrastructure
 - During the Terraform run it calls on Ansible to bootstrap the Ansible control node
 - During the Terraform run it also connects to the Ansible control node and configures the rest of the EC2 instances
 
 
-## Requirments to deploy this from your local machine
+## Requirements to deploy this from your local machine
 
 - You will need to have an AWS Account and generate an access key
   - AWS_ACCESS_KEY_ID
@@ -35,22 +35,22 @@ with Terraform and Ansible
 - You will need to have AWS CLI installed locally on your machine
 - You will need to have Terraform installed locally on your machine
 
-## How the bootsrap script works
+## How the bootstrap script works
 
 - Creates a AWS S3 storage bucket for the Terraform remote state
 - Creates the path to store the SSH keys for each instance
 - Creates SSH Key pairs for each instance and stores them in the created path
 
-## How the Terraform works to crreate the instructure
+## How the Terraform works to create the infrastructure
 
 - Create a VPC with private and public subnets
 - Create a NAT gateway for the private subnets for internal breakout
-- Create security groups for each instance to allow spesific ports and also to allow egress traffic
+- Create security groups for each instance to allow specific ports and also to allow egress traffic
 - Create an EC2 instance that will be used for the Ansible control node
   - Create a Public IP address and Private IP address on public subnet
 - Create an EC2 instance that will be used for the Nginx load balancer
-  - Contais a Public IP address and Private IP address on public subnet
-- Create an EC2 instance that will be used for the microserices running docker
+  - Create a Public IP address and Private IP address on public subnet
+- Create an EC2 instance that will be used for the microservices running docker
   - Create a private IP address on private subnet
   - Create a IAM role policy that allows the microservice access to ECR resources
 - Create an EC2 instance that will be used for the database running PostgreSQL
@@ -58,19 +58,19 @@ with Terraform and Ansible
 
 ## How Terraform is used to bootsrap Ansible and configure the worker instances
 
-- Run a remote-exec against the Ansbile control instance which will return "Connected" once the instance \
+- Run a remote-exec against the Ansible control instance which will return "Connected" once the instance \
   is up and accepting an SSH connection
-- Run a local-exec from Terraform to the Ansible control node to bootsrap it with Ansible using Ansible and \
+- Run a local-exec from Terraform to the Ansible control node to bootstrap it with Ansible using Ansible and \
   configure it by copying all the required [worker instance files](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible/config) onto the Ansible control instance
   - This step is required to allow the next steps to run from the Ansible control instance to configure the \
     rest of the instances as they only have private IP addresses
-- Run a remote-exec to connect to the Ansible control instnace and run the playbook on the control instnce to \
+- Run a remote-exec to connect to the Ansible control instance and run the playbook on the control instance to \
   configure the load balancer with Nginx and configure the reverse proxy for the API path
-- Run a remote-exec to connect to the Ansible control instnace and run the playbook on the control instnce to \
+- Run a remote-exec to connect to the Ansible control instance and run the playbook on the control instance to \
   configure the database with Postgres, create a database and user and import the sample database sql file
 - Run a remote-exec to connect to the Ansible control instance and run the playbook on the control instance to \
   configure microservice by installing Docker, pulling the images for frontend and backend from ECR and running them
-- Here is the location of the [Ansible bootsrap](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible_bootstrap.tf) for refference
+- Here is the location of the [Ansible bootsrap](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible_bootstrap.tf) for reference
 
 ## How the load balancer and microserice communication works
 
@@ -118,9 +118,9 @@ variable "vpc" {
 
 ```
 
-- The variable values themself are not stored in the variable but instead use [variables.tfvars](https://github.com/edwardpullen/devops_challenge/tree/main/environment/variables.tfvars) as can be seen below
+- The variable values are not stored in the variable.tf file but instead use [variables.tfvars](https://github.com/edwardpullen/devops_challenge/tree/main/environment/variables.tfvars) as can be seen below
 
-```teraform
+```terraform
 vpc = {
   name               = "devops-challenge"
   cidr               = "10.0.0.0/16"
@@ -136,10 +136,10 @@ vpc = {
 }
 ```
 
-- The above way of storing variables separate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastrucutre/variable.tf) file allows for easy deployment if you where \
+- The above way of storing variables separate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastrucutre/variables.tf) file allows for easy deployment if you where \
   to deploy another environment like staging or production.
 
 ## How the Deployment process works
 
 1. Clone the repositroy to your local machine
-2. Run the [bootsrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh)
+2. Run the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh)
