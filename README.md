@@ -155,3 +155,30 @@ vpc = {
 10. Run a plan to see what resources will be created: ```terraform plan --var-file=../environment/variables.tfvars```
 11. Run a apply to create the resources: ```terraform apply```
 12. Once Terraform has finished ran it will output the http url to access the app on
+
+## Items that still needs work
+
+- Securely pull the sample database file into the database, currently it's stored in the code
+- Securely pass the backend database credentials into the image at build this, currently hard coded in the file
+- Configure HTTPS
+- Change the SSH port of the instances from 22 to 1337
+
+## Recommendations on how I would have went about deploying this app
+
+- Deploy a managed EKS cluster
+- Deploy AWS Network load balancer
+- Deploy a managed RDS database
+- Deploy ArgoCD (GitOps) into the EKS cluster
+- Configure the frontend and backend to work with a helm chart
+  - Deploy the apps using ArgoCD
+- Deploy Nginx Ingress controller using ArgoCD
+- Deploy ArgoCD Image Updater into the EKS cluster using ArgoCD
+- Configure GitHub workflow to build and push images to ECR
+- Configure Image Updater to pull images from ECR with regex tag
+  - Image updater will then monitor for new images
+  - Notify ArgoCD when there is a new image
+  - ArgoCD will deploy the new image into the EKS cluster
+- Add Grafana for Observability to the mix with
+  - Prometheus
+  - Open Telemetry
+  - Jaeger
