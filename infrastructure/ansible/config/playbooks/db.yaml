@@ -88,13 +88,13 @@
 
     - name: Create the database
       postgresql_db:
-        name: jumia_phone_validator
+        name: "{{ database_name }}"
       become: true
       become_user: postgres
 
     - name: Import database from file
       postgresql_db:
-        name: jumia_phone_validator
+        name: "{{ database_name }}"
         state: restore
         target: /tmp/sample.sql
       become: true
@@ -102,9 +102,9 @@
 
     - name: Ensure user has access to the new database
       postgresql_user:
-        db: jumia_phone_validator
-        name: jumia
-        password: dbpassword123!
+        db: "{{ database_name }}"
+        name: "{{ database_user }}"
+        password: "{{ database_password }}"
         priv: ALL
         state: present
       become: true
@@ -112,24 +112,28 @@
 
     - name: Grant privileges on table
       postgresql_privs:
-        database: jumia_phone_validator
+        database: "{{ database_name }}"
         state: present
         privs: SELECT,INSERT,UPDATE
         type: table
         objs: customer
         schema: public
-        roles: jumia
+        roles: "{{ database_user }}"
         grant_option: yes
       become: true
       become_user: postgres
 
     - name: Ensure user does not have unnecessary permissions
       postgresql_user: 
-        name: jumia
+        name: "{{ database_user }}"
         role_attr_flags: NOSUPERUSER,NOCREATEDB
         state: present
       become: true
       become_user: postgres
+
+    - name: Pull backend image
+      shell: 
+        echo "{{ database_name }}" > /tmp/temp.txt
 
   handlers:
     - name: Restart PostgreSQL

@@ -1,4 +1,18 @@
+# AWS region
 region     = "eu-central-1"
+
+# AWS provider variables
+# access_key = ""
+# secret_key = ""
+
+# Postgres database credentials
+# database_name = ""
+# database_user = ""
+# database_password = ""
+
+# Ansible control ssh key location
+ansible_ssh_key = "./ansible/config/keys/ansible-ssh-key.pem"
+
 
 # VPC related variables
 vpc = {
@@ -15,6 +29,8 @@ vpc = {
   }
 }
 
+
+# Security group related variables 
 ansible_security_group_ingress = [
   {
     from_port   = 22
@@ -147,7 +163,8 @@ db_security_group_egress = [
   }
 ]
 
-# ec2 instance related variables
+
+# EC2 instance related variables
 ansible_instance = {
   name                        = "ansible"
   instance_type               = "t2.small"
@@ -187,7 +204,6 @@ microservice_ec2_instance = {
     environment = "production"
   }
 }
-
 
 db_ec2_instance = {
   name                        = "database"

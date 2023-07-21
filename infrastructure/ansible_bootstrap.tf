@@ -47,7 +47,7 @@ resource "null_resource" "my_instance" {
       host        = module.ansible_instance.public_ip
     }
     
-    inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/db.yaml --ssh-common-args='-o StrictHostKeyChecking=no'"]
+    inline = ["ansible-playbook -i ~/ansible/hosts ~/ansible/playbooks/db.yaml --extra-vars 'database_name=${var.database_name} database_user=${var.database_user} database_password=${var.database_password}' --ssh-common-args='-o StrictHostKeyChecking=no'"]
   }
   
   # Tell ansible control node to run against microservice and configure it, pull and run the imgaes

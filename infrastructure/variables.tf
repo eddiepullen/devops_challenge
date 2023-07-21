@@ -20,6 +20,22 @@ variable "ansible_ssh_key" {
   type        = string
 }
 
+variable "database_name" {
+  description = "Postgres databsae name}"
+  type        = string
+}
+
+variable "database_user" {
+  description = "Postgres databsae user"
+  type        = string
+}
+
+variable "database_password" {
+  description = "Postgres database password"
+  type        = string
+}
+
+
 # VPC related variables
 variable "vpc" {
   type = object({
