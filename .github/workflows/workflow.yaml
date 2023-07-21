@@ -75,7 +75,6 @@ jobs:
           echo "${{ secrets.MICROSERVICE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           chmod 600 ${{ env.KEY_PATH }}/*
           terraform validate 
-
       - name: Terraform Plan
         id: plan
         shell: bash
@@ -83,12 +82,16 @@ jobs:
         env:
           TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
-          terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars -var ansible_ssh_key=${{ env.KEY_PATH }}${{ env.KEY }}
+          terraform plan -out tfplan -input=false -lock=false --var-file=../environment/variables.tfvars
           terraform show -json tfplan > plan.json
       - name: Terraform Apply
         id: apply
         shell: bash
         working-directory: infrastructure
+        env:
+          TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
           terraform apply -auto-approve tfplan
+          rm -rf ${{ env.KEY_PATH }}
