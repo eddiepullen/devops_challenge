@@ -94,5 +94,5 @@ jobs:
         run: |
           # mkdir -p ${{ env.KEY_PATH }}
           # echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.ANSIBLE_SSH_KEY }}
-          chmod 600 ${{ env.KEY_PATH }}*
+          # chmod 600 ${{ env.KEY_PATH }}*
           terraform apply -auto-approve tfplan
