@@ -41,7 +41,7 @@ with Terraform and Ansible
 - Creates the path to store the SSH keys for each instance
 - Creates SSH Key pairs for each instance and stores them in the created path
 
-## How the Terraform works to create the infrastructure
+## How Terraform creates the infrastructure
 
 - Create a VPC with private and public subnets
 - Create a NAT gateway for the private subnets for internal breakout
@@ -56,7 +56,7 @@ with Terraform and Ansible
 - Create an EC2 instance that will be used for the database running PostgreSQL
   - Create a private IP address on private subnet
 
-## How Terraform is used to bootsrap Ansible and configure the worker instances
+## How Terraform is used to bootstrap Ansible and configure the worker instances
 
 - Run a remote-exec against the Ansible control instance which will return "Connected" once the instance \
   is up and accepting an SSH connection
@@ -72,7 +72,7 @@ with Terraform and Ansible
   configure microservice by installing Docker, pulling the images for frontend and backend from ECR and running them
 - Here is the location of the [Ansible bootstrap](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible_bootstrap.tf) for reference
 
-## How the load balancer and microserice communication works
+## How the load balancer and microservices communication works
 
 - Frontend is running on port 80 and listening on port 8081
 - Backend is running on port 8080 and listening on port 8080
@@ -141,5 +141,16 @@ vpc = {
 
 ## How the Deployment process works
 
-1. Clone the repositroy to your local machine
-2. Run the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh)
+1. Clone the repository to your local machine
+2. You will need to build and push the images to ECR 
+   1. Frontend image needs to be named ```validator-frontend``` using ```latest``` tag
+   2. Backend image needs to be named ```validator-backend``` using ```latest``` tag
+3. Change the region and bucket name in the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh) script
+4. Run the [bootstrap.sh](https://github.com/edwardpullen/devops_challenge/blob/main/scripts/bootstrap.sh)
+5. Update the [backend.conf](https://github.com/edwardpullen/devops_challenge/blob/main/environment/backend.conf) bucket, key and region
+6. Update the [variables.tfvars](https://github.com/edwardpullen/devops_challenge/tree/main/environment/variables.tfvars) with your ```region```
+7. Change directory so that you are in the Terraform [infrastructure] location
+8. Initialize the Terraform providers and modules: ```terraform init -backend-config=../environment/backend.conf```
+9. Validate the Terraform code: ```terraform validate```
+10. Run a plan to see what resources will be created: ```terraform plan --var-file=../environment/variables.tfvars```
+11. Run a apply to create the resources: ```terraform apply```
