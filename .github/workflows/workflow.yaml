@@ -89,4 +89,3 @@ jobs:
         run: |
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           terraform apply -auto-approve tfplan
-    #-var ansible_ssh_key=${{ secrets.ANSIBLE_SSH_KEY }}
