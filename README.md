@@ -56,7 +56,7 @@ with Terraform and Ansible
 - Create an EC2 instance that will be used for the database running PostgreSQL
   - Create a private IP address on private subnet
 
-## How the Terraform works to bootstrap Ansible and run it
+## How Terraform is used to bootsrap Ansible and configure the worker instances
 
 - Run a remote-exec against the Ansbile control instance which will return "Connected" once the instance \
   is up and accepting an SSH connection
@@ -70,6 +70,7 @@ with Terraform and Ansible
   configure the database with Postgres, create a database and user and import the sample database sql file
 - Run a remote-exec to connect to the Ansible control instance and run the playbook on the control instance to \
   configure microservice by installing Docker, pulling the images for frontend and backend from ECR and running them
+- Here is the location of the [Ansible bootsrap](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/ansible_bootstrap.tf) for refference
 
 ## How the load balancer and microserice communication works
 
@@ -82,8 +83,8 @@ with Terraform and Ansible
 ## How the variables are defined
 
 - The approach taken here is to store the variables for each module or resource in the form of an object instead \
-  of having each variable seperate which allows you to understan easily which variable is used for which module \
-  or resource and is more human readable. An example can be seen below
+  of having each variable separate which allows you to determine easily which variable is used for which module \
+  or resource and is more human readable that having each variable separately defined. An example can be seen below
 
 ```terraform
 
@@ -135,8 +136,8 @@ vpc = {
 }
 ```
 
-- The above way of storing variables seperate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastrucutre/variable.tf) file allows for easy deployment if you where to \
-  deploy another environment like staging or production.
+- The above way of storing variables separate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastrucutre/variable.tf) file allows for easy deployment if \
+  you where to deploy another environment like staging or production.
 
 ## How the Deployment process works
 
