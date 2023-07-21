@@ -1,16 +1,14 @@
 name: devops-challenge
-
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   KEY_PATH: ./ansible/config/keys/
   KEY: ansible-ssh-key.pem
-
 on:
   push:
     branches:
       - main
-
+      
 jobs:
   devops-challenge:
     runs-on: ubuntu-latest
@@ -18,7 +16,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3.5.3
-
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
@@ -29,7 +26,6 @@ jobs:
       # - name: Login to Amazon ECR
       #   id: login-ecr
       #   uses: aws-actions/amazon-ecr-login@v1
-
       # - name: Build, tag, and push frontend image to ECR
       #   id: build-frontned
       #   env:
@@ -42,7 +38,6 @@ jobs:
       #     docker build --build-arg POSTGRES_HOST={{secrets.POSTGRES_HOST}} --build-arg POSTGRES_PORT={{secrets.POSTGRES_PORT}} --build-arg POSTGRES_DB={{secrets.POSTGRES_DB}} --build-arg POSTGRES_USERNAME={{secrets.POSTGRES_USERNAME}} --build-arg POSTGRE_PASSWORD={{secrets.POSTGRE_PASSWORD}} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-frontend/
       #     echo "Pushing image to ECR..."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
       # - name: Build, tag, and push backend image to ECR
       #   id: build-backend
       #   env:
@@ -55,7 +50,6 @@ jobs:
       #     docker build --build-arg POSTGRES_HOST={{secrets.POSTGRES_HOST}} --build-arg POSTGRES_PORT={{secrets.POSTGRES_PORT}} --build-arg POSTGRES_DB={{secrets.POSTGRES_DB}} --build-arg POSTGRES_USERNAME={{secrets.POSTGRES_USERNAME}} --build-arg POSTGRE_PASSWORD={{secrets.POSTGRE_PASSWORD}} -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG ./validator-backend/
       #     echo "Pushing image to ECR..."
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
       - name: Terraform Init
         id: init
         shell: bash
@@ -93,5 +87,6 @@ jobs:
         env:
           TF_VAR_ansible_ssh_key: ${{ env.KEY_PATH }}${{ env.KEY }}
         run: |
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ${{ env.KEY_PATH }}${{ env.KEY }}
           terraform apply -auto-approve tfplan
-          rm -rf ${{ env.KEY_PATH }}
+    #-var ansible_ssh_key=${{ secrets.ANSIBLE_SSH_KEY }}
