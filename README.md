@@ -136,7 +136,7 @@ vpc = {
 }
 ```
 
-- The above way of storing variables separate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastrucutre/variables.tf) file allows for easy deployment if you where \
+- The above way of storing variables separate from the [variables.tf](https://github.com/edwardpullen/devops_challenge/tree/main/infrastructure/variables.tf) file allows for easy deployment if you where \
   to deploy another environment like staging or production.
 
 ## How the Deployment process works
